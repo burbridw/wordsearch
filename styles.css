@@ -7,7 +7,7 @@
 }
 
 :root {
-    --grid-text: clamp(1rem, 3vh, 3rem);
+    --grid-text: clamp(0.5rem, 4vh, 2rem);
 }
 
 body {
@@ -19,9 +19,9 @@ body {
 
 .wordsearch-grid {
     position: absolute;
-    top: 50%;
+    top: 5%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     display: grid;
     height: 80vh;
     width: 80vw;   
@@ -38,7 +38,37 @@ body {
     grid-template-columns: repeat(21,1fr);
     grid-template-rows: repeat(14,1fr);
 }
+.answer-grid {
+    position: absolute;
+    display: grid;
+    top: 88%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 10vh;
+    width: 90%;
+    border: 1px solid black;
+}
+.answer-grid.easy {
+    grid-template-columns: repeat(8,1fr);
+}
 
+.answer-grid.medium {
+    grid-template-columns: repeat(12,1fr);
+}
+
+.answer-grid.hard {
+    grid-template-columns: repeat(18,1fr);
+}
+
+.answer-image-box img {
+    max-height: 8vh;
+    max-width: 12vh;
+}
+.answer-image-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .grid-box {
     border: 1px solid black;
     display: flex;
@@ -51,13 +81,21 @@ body {
 .black {
     background-color: black;
 }
-.red {
+/* .red {
     background-color: red;
-}
+} */
 .filled {
     background-color: lightgreen;
 }
-
+.selected-image {
+    background-color: blue;
+}
+.selected {
+    background-color: blue;
+}
+.answer-finished {
+    background-color: green;
+}
 span {
     height: fit-content;
     width: fit-content;
