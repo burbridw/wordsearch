@@ -8,6 +8,7 @@
 
 :root {
     --grid-text: clamp(0.5rem, 4vh, 2rem);
+    --answer-text: clamp(0.5rem,3vh,4rem);
 }
 
 body {
@@ -19,11 +20,11 @@ body {
 
 .wordsearch-grid {
     position: absolute;
-    top: 5%;
+    top: 2%;
     left: 50%;
     transform: translateX(-50%);
     display: grid;
-    height: 80vh;
+    height: 75vh;
     width: 80vw;   
 }
 .wordsearch-grid.easy {
@@ -41,23 +42,26 @@ body {
 .answer-grid {
     position: absolute;
     display: grid;
-    top: 88%;
+    top: 79%;
     left: 50%;
     transform: translateX(-50%);
-    height: 10vh;
+    height: 20vh;
     width: 90%;
     border: 1px solid black;
 }
 .answer-grid.easy {
-    grid-template-columns: repeat(8,1fr);
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: repeat(2, 1fr);
 }
 
 .answer-grid.medium {
-    grid-template-columns: repeat(12,1fr);
+    grid-template-columns: repeat(6,1fr);
+    grid-template-rows: repeat(2, 1fr);
 }
 
 .answer-grid.hard {
-    grid-template-columns: repeat(18,1fr);
+    grid-template-columns: repeat(6,1fr);
+    grid-template-rows: repeat(3, 1fr);
 }
 
 .answer-image-box img {
@@ -66,8 +70,22 @@ body {
 }
 .answer-image-box {
     display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.answer-image-text {
+    display: flex;
     justify-content: center;
     align-items: center;
+    font-size: var(--answer-text);
+}
+.answer-grid.medium div img {
+    max-height: 6vh;
+    max-width: 8vh;
+}
+.answer-grid.hard div img {
+    max-height: 5vh;
+    max-width: 6vh;
 }
 .grid-box {
     border: 1px solid black;

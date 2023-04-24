@@ -1,7 +1,7 @@
 const alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 const wordList = ["DOG","FISH","CAT"]
-const animals= ["bear","polarbear", "elephant", "tiger", "lion", "zebra", "gorilla", "monkey", "horse", "camel", "cow", "sheep", "pig", "panda", "koala", "penguin", "dog", "cat", "rabbit", "mouse", "snake", "frog", "bird", "eagle"]
-const buildings = ["house","elementaryschool","juniorhighschool","park","library","museum","cityhall","hospital","busstop","station","policestation","firestation","gasstation","postoffice","bookstore","conveniencestore","departmentstore","restaurant","supermarket","flowershop","castle","shrine","temple","amusementpark","aquarium","stadium","zoo","bridge","street"]
+const animals= ["bear","polar bear", "elephant", "tiger", "lion", "zebra", "gorilla", "monkey", "horse", "camel", "cow", "sheep", "pig", "panda", "koala", "penguin", "dog", "cat", "rabbit", "mouse", "snake", "frog", "bird", "eagle"]
+const buildings = ["house","elementary school","junior high school","park","library","museum","city hall","hospital","bus stop","station","police station","fire station","gas station","post office","bookstore","convenience store","department store","restaurant","supermarket","flower shop","castle","shrine","temple","amusement park","aquarium","stadium","zoo","bridge","street"]
 // const wordListDeploy = animals.slice(0).sort((a,b)=>{ return b.length - a.length})
 const gridContainer = document.querySelector(".wordsearch-grid")
 const answerDisplay = document.querySelector(".answer-grid")
@@ -78,7 +78,7 @@ const allObj = {
     "./images/ingredients/img1.png": "beef", "./images/ingredients/img2.png": "chicken", "./images/ingredients/img3.png": "pork", "./images/ingredients/img4.png": "bacon", "./images/ingredients/img5.png": "ham", "./images/ingredients/img6.png": "cheese", "./images/ingredients/img7.png": "egg", "./images/ingredients/img8.png": "fish", "./images/ingredients/img9.png": "salmon", "./images/ingredients/img10.png": "octopus", 
     "./images/meals/img1.png": "breakfast", "./images/meals/img2.png": "lunch", "./images/meals/img3.png": "dinner", 
     "./images/tastes/img1.png": "bitter", "./images/tastes/img2.png": "sweet", "./images/tastes/img3.png": "salty", "./images/tastes/img4.png": "sour", "./images/tastes/img5.png": "spicy", "./images/tastes/img6.png": "delicious", "./images/tastes/img7.png": "soft", "./images/tastes/img8.png": "hard", "./images/tastes/img9.png": "cold", "./images/tastes/img10.png": "hot", 
-    "./images/animals/img1.png": "bear", "./images/animals/img2.png": "polarbear", "./images/animals/img3.png": "elephant", "./images/animals/img4.png": "tiger", "./images/animals/img5.png": "lion", "./images/animals/img6.png": "zebra", "./images/animals/img7.png": "gorilla", "./images/animals/img8.png": "monkey", "./images/animals/img9.png": "horse", "./images/animals/img10.png": "camel", "./images/animals/img11.png": "cow", "./images/animals/img12.png": "sheep", "./images/animals/img13.png": "pig", "./images/animals/img14.png": "panda", "./images/animals/img15.png": "koala", "./images/animals/img16.png": "penguin", "./images/animals/img17.png": "dog", "./images/animals/img18.png": "cat", "./images/animals/img19.png": "rabbit", "./images/animals/img20.png": "mouse", "./images/animals/img21.png": "snake", "./images/animals/img22.png": "frog", "./images/animals/img23.png": "bird", "./images/animals/img24.png": "eagle", 
+    "./images/animals/img1.png": "bear", "./images/animals/img2.png": "polar bear", "./images/animals/img3.png": "elephant", "./images/animals/img4.png": "tiger", "./images/animals/img5.png": "lion", "./images/animals/img6.png": "zebra", "./images/animals/img7.png": "gorilla", "./images/animals/img8.png": "monkey", "./images/animals/img9.png": "horse", "./images/animals/img10.png": "camel", "./images/animals/img11.png": "cow", "./images/animals/img12.png": "sheep", "./images/animals/img13.png": "pig", "./images/animals/img14.png": "panda", "./images/animals/img15.png": "koala", "./images/animals/img16.png": "penguin", "./images/animals/img17.png": "dog", "./images/animals/img18.png": "cat", "./images/animals/img19.png": "rabbit", "./images/animals/img20.png": "mouse", "./images/animals/img21.png": "snake", "./images/animals/img22.png": "frog", "./images/animals/img23.png": "bird", "./images/animals/img24.png": "eagle", 
     "./images/seaanimals/img1.png": "whale", "./images/seaanimals/img2.png": "shark", "./images/seaanimals/img3.png": "dolphin", "./images/seaanimals/img4.png": "sea turtle", "./images/seaanimals/img5.png": "fish", "./images/seaanimals/img6.png": "squid", "./images/seaanimals/img7.png": "jellyfish", "./images/seaanimals/img8.png": "shrimp", 
     "./images/bugs/img1.png": "ant", "./images/bugs/img2.png": "butterfly", "./images/bugs/img3.png": "grasshopper", "./images/bugs/img4.png": "spider", 
     "./images/nature/img1.png": "desert", "./images/nature/img2.png": "forest", "./images/nature/img3.png": "island", "./images/nature/img4.png": "lake", "./images/nature/img5.png": "mountain", "./images/nature/img6.png": "pond", "./images/nature/img7.png": "river", "./images/nature/img8.png": "savanna", "./images/nature/img9.png": "sea", "./images/nature/img10.png": "wetlands", "./images/nature/img11.png": "flower", "./images/nature/img12.png": "tree", 
@@ -138,7 +138,7 @@ let splitWordsArr = []
 let word
 let testNumber
 
-let difficulty = "easy"
+let difficulty = "hard"
 answerDisplay.classList.add(difficulty)
 
 let gridWidth = widths[difficulty]
@@ -148,7 +148,7 @@ let stop = false
 
 let wordCounter = 0
 
-let sizeCheckArr = animals.filter( (word) => word.length <= (gridWidth*0.8) )
+let sizeCheckArr = buildings.filter( (word) => word.length <= (gridWidth*0.8) )
 
 let randomizedArr = sizeCheckArr.slice(0).sort( ()=> { return 0.5 - Math.random() } )
 let wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
@@ -169,18 +169,18 @@ generateGrid()
 // window.addEventListener("click",populateGrid)
 populateGrid()
 
-function checkAnswer(arr) {
-    console.log(arr)
+function checkAnswer(answerArr) {
+    console.log(answerArr)
     gridBoxes = document.querySelectorAll(".grid-box")
     let count = 0
-    let countFinish = arr.length
-    for ( let i = 0; i < arr.length; i++ ) {
-        if ( gridBoxes[arr[i]].classList.contains("selected") || gridBoxes[arr[i]].classList.contains("answer-finished")) {
+    let countFinish = answerArr.length
+    for ( let i = 0; i < answerArr.length; i++ ) {
+        if ( gridBoxes[answerArr[i]].classList.contains("selected") || gridBoxes[answerArr[i]].classList.contains("answer-finished")) {
             count++
         }
     }
     if ( count === countFinish && count > 1 && imageSelected ) {
-        arr.forEach( (box) => {
+        answerArr.forEach( (box) => {
             gridBoxes[box].classList.add("answer-finished")
         })
         document.querySelector(".selected-image").classList.add("answer-finished")
@@ -196,9 +196,9 @@ function checkAnswer(arr) {
 }
 
 
-function markAnswer(arr) {
+function markAnswer(answerArr) {
     gridBoxes = document.querySelectorAll(".grid-box")
-    arr.forEach( (index) =>{
+    answerArr.forEach( (index) =>{
         gridBoxes[index].classList.add("answer")
     })
 }
@@ -238,7 +238,7 @@ function populateGrid() {
                         image.classList.add("selected-image")
                         imageSelected = true
                         let targetImage = image.children[0].getAttribute("src")
-                        let targetName = allObj[targetImage]
+                        let targetName = allObj[targetImage].replaceAll(" ","")
                         answerArr = answersList[targetName]
                         markAnswer(answerArr)
                         checkAnswer(answerArr)
@@ -358,46 +358,52 @@ function checkDiagonal(word,index) {
 
 function goRight(word,index) {
     gridBoxes = document.querySelectorAll(".grid-box")
+    let noSpaceWord = word.filter( (a)=> {return a != " " })
     let tempAnswerIndexes = []
-    for ( let i = 0; i < word.length; i ++ ) {
-        gridBoxes[index+i].children[0].textContent = word[i]
+    for ( let i = 0; i < noSpaceWord.length; i ++ ) {
+        gridBoxes[index+i].children[0].textContent = noSpaceWord[i]
         gridBoxes[index+i].classList.add("filled")
         tempAnswerIndexes.push(index+i)
     }
     wordCounter++
     let finalWord = word.join("").toLowerCase()
     let wordImage = getKey(allObj,finalWord)
-    answersList[finalWord] = tempAnswerIndexes
-    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}">`
+    let answerWord = finalWord.replaceAll(" ","")
+    answersList[answerWord] = tempAnswerIndexes
+    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
 }
 function goDown(word,index) {
     gridBoxes = document.querySelectorAll(".grid-box")
+    let noSpaceWord = word.filter( (a)=> {return a != " " })
     let tempAnswerIndexes = []
-    for ( let i = 0; i < word.length; i ++ ) {
-        gridBoxes[index+(i*gridWidth)].children[0].textContent = word[i]
+    for ( let i = 0; i < noSpaceWord.length; i ++ ) {
+        gridBoxes[index+(i*gridWidth)].children[0].textContent = noSpaceWord[i]
         gridBoxes[index+(i*gridWidth)].classList.add("filled")
         tempAnswerIndexes.push(index+(i*gridWidth))
     }
     wordCounter++
     let finalWord = word.join("").toLowerCase()
     let wordImage = getKey(allObj,finalWord)
-    answersList[finalWord] = tempAnswerIndexes
-    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}">`
+    let answerWord = finalWord.replaceAll(" ","")
+    answersList[answerWord] = tempAnswerIndexes
+    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
 }
 function goDiagonal(word,index) {
     gridBoxes = document.querySelectorAll(".grid-box")
+    let noSpaceWord = word.filter( (a)=> {return a != " " })
     let tempAnswerIndexes = []
-    for ( let i = 0; i < word.length; i ++ ) {
-        gridBoxes[(index+(i*gridWidth))+i].children[0].textContent = word[i]
+    for ( let i = 0; i < noSpaceWord.length; i ++ ) {
+        gridBoxes[(index+(i*gridWidth))+i].children[0].textContent = noSpaceWord[i]
         gridBoxes[(index+(i*gridWidth))+i].classList.add("filled")
         tempAnswerIndexes.push((index+(i*gridWidth))+i)
     }
     wordCounter++
     let finalWord = word.join("").toLowerCase()
     let wordImage = getKey(allObj,finalWord)
-    answersList[finalWord] = tempAnswerIndexes
-    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}">`
+    let answerWord = finalWord.replaceAll(" ","")
+    answersList[answerWord] = tempAnswerIndexes
+    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
 }
