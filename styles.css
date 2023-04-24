@@ -25,7 +25,9 @@ body {
     transform: translateX(-50%);
     display: grid;
     height: 75vh;
-    width: 80vw;   
+    width: 80vw; 
+    box-shadow: 1px 1px 3px 1px black; 
+    background-color: cadetblue;
 }
 .wordsearch-grid.easy {
     grid-template-columns: repeat(12,1fr);
@@ -47,7 +49,6 @@ body {
     transform: translateX(-50%);
     height: 20vh;
     width: 90%;
-    border: 1px solid black;
 }
 .answer-grid.easy {
     grid-template-columns: repeat(4,1fr);
@@ -63,7 +64,9 @@ body {
     grid-template-columns: repeat(6,1fr);
     grid-template-rows: repeat(3, 1fr);
 }
-
+.answer-image-box {
+    border-radius: 10px;
+}
 .answer-image-box img {
     max-height: 8vh;
     max-width: 12vh;
@@ -96,23 +99,19 @@ body {
     font-size: var(--grid-text);
 }
 
-.black {
-    background-color: black;
-}
-/* .red {
-    background-color: red;
-} */
-.filled {
+/* .filled {
     background-color: lightgreen;
-}
+} */
 .selected-image {
     background-color: blue;
+    color: white;
 }
 .selected {
     background-color: blue;
 }
 .answer-finished {
     background-color: green;
+    color: white;
 }
 span {
     height: fit-content;
