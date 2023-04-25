@@ -9,6 +9,10 @@
 :root {
     --grid-text: clamp(0.5rem, 4vh, 2rem);
     --answer-text: clamp(0.5rem,3vh,4rem);
+    --button-shadow: 1px 1px 3px 1px black;
+    --set-shadow: 1px 1px 5px 3px white;
+    --button-color: cadetblue;
+    --button-text: clamp(1rem,5vh,4rem);
 }
 
 body {
@@ -18,6 +22,69 @@ body {
     font-family: Tahoma, sans-serif;
 }
 
+.setup-back-button, .setup-next-button {
+    position: absolute;
+    height: 8vh;
+    width: 90vw;
+    background-color: var(--button-color);
+    box-shadow: var(--button-shadow);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--button-text);
+    color: white;
+}
+.setup-back-button {
+    top: 1%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.setup-next-button {
+    top: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.setup-button {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    height: 20vh;
+    width: 15vw;
+    font-size: var(--button-text);
+    background-color: var(--button-color);
+    box-shadow: var(--button-shadow);
+    border-radius: 15px;
+}
+.setup-button.set {
+    box-shadow: var(--set-shadow);
+}
+.preset-game {
+    top: 20%;
+    left: 15%;
+    width: 30vw;
+}
+.random-game {
+    top: 20%;
+    left: 55%;
+    width: 30vw;
+}
+.difficulty-easy {
+    top: 50%;
+    left: 15%;
+}
+.difficulty-medium {
+    top: 50%;
+    left: 42.5%;
+}
+.difficulty-hard {
+    top: 50%;
+    left: 70%;
+}
+
+
 .wordsearch-grid {
     position: absolute;
     top: 2%;
@@ -26,8 +93,8 @@ body {
     display: grid;
     height: 75vh;
     width: 80vw; 
-    box-shadow: 1px 1px 3px 1px black; 
-    background-color: cadetblue;
+    box-shadow: var(--button-shadow);
+    background-color: var(--button-color);
 }
 .wordsearch-grid.easy {
     grid-template-columns: repeat(12,1fr);
@@ -116,4 +183,8 @@ body {
 span {
     height: fit-content;
     width: fit-content;
+}
+.behind {
+    display: none;
+    z-index: -25;
 }

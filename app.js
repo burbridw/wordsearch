@@ -6,10 +6,67 @@ const buildings = ["house","elementary school","junior high school","park","libr
 const gridContainer = document.querySelector(".wordsearch-grid")
 const answerDisplay = document.querySelector(".answer-grid")
 
+const setupFirst = document.querySelector(".setup-first")
+const setupPreset = document.querySelector(".setup-preset")
+const setupRandom = document.querySelector(".setup-random")
+const presetSelect = document.querySelector(".preset-game")
+const randomSelect = document.querySelector(".random-game")
+
+const setupBack = document.querySelector(".setup-back-button")
+const setupNext = document.querySelector(".setup-next-button")
+
+
 let gridLayers
 let gridBoxes
 let abort
 let imageSelected = false
+
+let inSetupFirst = true
+let inSetupPreset = false
+let inSetupRandom = false
+let inGame = false
+let setupPresetSelect = false
+let setupRandomSelect = false
+
+setupNext.addEventListener("click",()=>{
+    if ( inSetupFirst ) {
+        if ( setupPresetSelect ) {
+            setupPreset.classList.remove("behind")
+            setupFirst.classList.add("behind")
+            inSetupFirst = false
+            inSetupPreset = true
+        } else if ( setupRandomSelect ) {
+            setupRandom.classList.remove("behind")
+            setupFirst.classList.add("behind")
+            inSetupFirst = false
+            inSetupRandom = true
+        }
+    }
+})
+
+presetSelect.addEventListener("click",()=>{
+    if ( setupRandomSelect ) {
+        setupRandomSelect = false
+        randomSelect.classList.remove("set")
+        setupPresetSelect = true
+        presetSelect.classList.add("set")
+    } else {
+        setupPresetSelect = true
+        presetSelect.classList.add("set")
+    }
+})
+randomSelect.addEventListener("click",()=>{
+    if ( setupPresetSelect ) {
+        setupPresetSelect = false
+        presetSelect.classList.remove("set")
+        setupRandomSelect = true
+        randomSelect.classList.add("set")
+    } else {
+        setupRandomSelect = true
+        randomSelect.classList.add("set")
+    }
+})
+
 
 let answersList = {}
 
@@ -165,12 +222,49 @@ function generateGrid() {
 }
 
 generateGrid()
-
-// window.addEventListener("click",populateGrid)
 populateGrid()
 
+// let mouseDown = false
+// window.addEventListener("mousedown",(e)=>{
+//     console.log("mouse is down")
+//     mouseDown = true
+//     let target = document.elementFromPoint(e.x,e.y)
+//     if ( target.classList.contains("grid-box") ) {
+//         target.classList.add("selected")
+//     } else if ( target.parentElement.classList.contains("grid-box") ) {
+//         target.parentElement.classList.add("selected")
+//     }
+// })
+
+// window.addEventListener("mousemove",(e)=> {
+//     e.preventDefault()
+//     let moveTarget = document.elementFromPoint(e.x,e.y)
+//     if ( mouseDown ) {
+//         if ( moveTarget.classList.contains("grid-box") ) {
+//             moveTarget.classList.add("selected")
+//             checkAnswer(answerArr)
+//         } else if ( moveTarget.parentElement.classList.contains("grid-box") ) {
+//             moveTarget.parentElement.classList.add("grid-box")
+//         }
+//     }
+// })
+// window.addEventListener("mouseup",(e)=>{
+//     mouseDown = false
+// })
+
+// window.addEventListener("touchmove",getTouchPosition)
+
+// let touchX = 0
+// let touchY = 0
+
+// function getTouchPosition(event) {
+//     let touch = event.touches[0]
+//     touchX = Math.floor(touch.pageX)
+//     touchY = Math.floor(touch.pageY)
+// }
+
+
 function checkAnswer(answerArr) {
-    console.log(answerArr)
     gridBoxes = document.querySelectorAll(".grid-box")
     let count = 0
     let countFinish = answerArr.length
@@ -220,6 +314,18 @@ function populateGrid() {
                     }
                 }
             })
+            // box.addEventListener("touchmove",()=>{
+            //     let touchTarget = document.elementFromPoint(touchX,touchY)
+            //     if ( touchTarget.classList.contains("grid-box") ) {
+            //         if ( !touchTarget.classList.contains("answer-finished") ) {
+            //             touchTarget.classList.add("selected")
+            //         }
+            //     } else if ( touchTarget.parentElement.classList.contains("grid-box") ) {
+            //         if ( !touchTarget.parentElement.classList.contains("answer-finished") ) {
+            //             touchTarget.parentElement.classList.add("selected")
+            //         }
+            //     }
+            // })
             if ( !box.classList.contains("filled") ) {
                 box.children[0].textContent = alphabet[ Math.floor( Math.random()*26 ) ]
             }
