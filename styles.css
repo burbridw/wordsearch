@@ -83,7 +83,30 @@ body {
     top: 50%;
     left: 70%;
 }
-
+.setup-preset-topics {
+    position: absolute;
+    top: 15%;
+    height: 40vh;
+    width: 80vw;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: repeat(3,1fr);
+    background-color: red;
+}
+.setup-preset-numbers {
+    position: absolute;
+    top: 60%;
+    width: 80vw;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 20vh;
+    display: grid;
+    grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(2,1fr);
+    background-color: green;
+}
 
 .wordsearch-grid {
     position: absolute;
