@@ -2,7 +2,6 @@ const alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P
 const wordList = ["DOG","FISH","CAT"]
 const animals= ["bear","polar bear", "elephant", "tiger", "lion", "zebra", "gorilla", "monkey", "horse", "camel", "cow", "sheep", "pig", "panda", "koala", "penguin", "dog", "cat", "rabbit", "mouse", "snake", "frog", "bird", "eagle"]
 const buildings = ["house","elementary school","junior high school","park","library","museum","city hall","hospital","bus stop","station","police station","fire station","gas station","post office","bookstore","convenience store","department store","restaurant","supermarket","flower shop","castle","shrine","temple","amusement park","aquarium","stadium","zoo","bridge","street"]
-// const wordListDeploy = animals.slice(0).sort((a,b)=>{ return b.length - a.length})
 const gridContainer = document.querySelector(".wordsearch-grid")
 const answerDisplay = document.querySelector(".answer-grid")
 
@@ -59,6 +58,19 @@ setupNext.addEventListener("click",()=>{
             setupFirst.classList.add("behind")
             inSetupFirst = false
             inSetupRandom = true
+            switch(difficulty) {
+                case "easy": {
+                    showEasyPresets()
+                    break
+                }
+                case "medium": {
+                    showMediumPresets()
+                    break
+                }
+                case "hard": {
+                    showHardPresets()
+                }
+            }
         }
     }
 })
@@ -69,7 +81,7 @@ setupBack.addEventListener("click",()=>{
         setupFirst.classList.remove("behind")
         inSetupFirst = true
         inSetupPreset = false
-        document.querySelectorAll(".preset-topic-button").forEach( (topic) =>{
+        document.querySelectorAll(".topic-button").forEach( (topic) =>{
             topic.classList.add("behind")
         })
     } else if ( inSetupRandom ) {
@@ -77,6 +89,9 @@ setupBack.addEventListener("click",()=>{
         setupFirst.classList.remove("behind")
         inSetupFirst = true
         inSetupRandom = false
+        document.querySelectorAll(".topic-button").forEach( (topic) =>{
+            topic.classList.add("behind")
+        })
     }
 })
 

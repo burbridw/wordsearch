@@ -107,7 +107,7 @@ body {
     grid-template-rows: repeat(2,1fr);
     gap: 1em;
 }
-.preset-topic-button {
+.preset-topic-button, .random-topic-button {
     background-color: var(--button-color);
     box-shadow: var(--button-shadow);
     border-radius: 10px;
@@ -116,6 +116,9 @@ body {
     align-items: center;
     font-size: var(--button-text);
     color: white;
+}
+.random-topic-button {
+    font-size: var(--answer-text);
 }
 .preset-number {
     display: flex;
@@ -127,7 +130,18 @@ body {
     border-radius: 2px;
     background-color: var(--button-color);
 }
-
+.setup-random-topics {
+    position: absolute;
+    top: 12%;
+    height: 65vh;
+    width: 80vw;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    grid-template-rows: repeat(6,1fr);
+    gap: 1em;
+}
 .wordsearch-grid {
     position: absolute;
     top: 2%;
