@@ -58,7 +58,7 @@ body {
     box-shadow: var(--button-shadow);
     border-radius: 15px;
 }
-.setup-button.set {
+.setup-button.set, .set-difficulty {
     box-shadow: var(--set-shadow);
 }
 .preset-game {
@@ -93,7 +93,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4,1fr);
     grid-template-rows: repeat(3,1fr);
-    background-color: red;
+    gap: 1em;
 }
 .setup-preset-numbers {
     position: absolute;
@@ -105,7 +105,27 @@ body {
     display: grid;
     grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(2,1fr);
-    background-color: green;
+    gap: 1em;
+}
+.preset-topic-button {
+    background-color: var(--button-color);
+    box-shadow: var(--button-shadow);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--button-text);
+    color: white;
+}
+.preset-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--grid-text);
+    color: white;
+    box-shadow: var(--button-shadow);
+    border-radius: 2px;
+    background-color: var(--button-color);
 }
 
 .wordsearch-grid {

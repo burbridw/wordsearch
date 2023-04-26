@@ -12,6 +12,10 @@ const setupRandom = document.querySelector(".setup-random")
 const presetSelect = document.querySelector(".preset-game")
 const randomSelect = document.querySelector(".random-game")
 
+const difficultyEasy = document.querySelector(".difficulty-easy")
+const difficultyMedium = document.querySelector(".difficulty-medium")
+const difficultyHard = document.querySelector(".difficulty-hard")
+
 const setupBack = document.querySelector(".setup-back-button")
 const setupNext = document.querySelector(".setup-next-button")
 
@@ -27,20 +31,52 @@ let inSetupRandom = false
 let inGame = false
 let setupPresetSelect = false
 let setupRandomSelect = false
+let difficultySet = false
+let difficulty
 
 setupNext.addEventListener("click",()=>{
     if ( inSetupFirst ) {
-        if ( setupPresetSelect ) {
+        if ( setupPresetSelect && difficultySet) {
             setupPreset.classList.remove("behind")
             setupFirst.classList.add("behind")
             inSetupFirst = false
             inSetupPreset = true
-        } else if ( setupRandomSelect ) {
+            switch(difficulty) {
+                case "easy": {
+                    showEasyPresets()
+                    break
+                }
+                case "medium": {
+                    showMediumPresets()
+                    break
+                }
+                case "hard": {
+                    showHardPresets()
+                }
+            }
+        } else if ( setupRandomSelect && difficultySet) {
             setupRandom.classList.remove("behind")
             setupFirst.classList.add("behind")
             inSetupFirst = false
             inSetupRandom = true
         }
+    }
+})
+
+setupBack.addEventListener("click",()=>{
+    if ( inSetupPreset ) {
+        setupPreset.classList.add("behind")
+        setupFirst.classList.remove("behind")
+        inSetupFirst = true
+        inSetupPreset = false
+        document.querySelectorAll(".preset-topic-button").forEach( (topic) =>{
+            topic.classList.add("behind")
+        })
+    } else if ( inSetupRandom ) {
+        setupRandom.classList.add("behind")
+        setupFirst.classList.remove("behind")
+        inSetupFirst = true
+        inSetupRandom = false
     }
 })
 
@@ -66,6 +102,56 @@ randomSelect.addEventListener("click",()=>{
         randomSelect.classList.add("set")
     }
 })
+
+difficultyEasy.addEventListener("click",()=>{
+    if ( !difficultySet ) {
+        difficultySet = true
+        difficulty = "easy"
+        difficultyEasy.classList.add("set-difficulty")
+    } else if ( difficultySet ) {
+        document.querySelector(".set-difficulty").classList.remove("set-difficulty")
+        difficulty = "easy"
+        difficultyEasy.classList.add("set-difficulty")
+    }
+})
+difficultyMedium.addEventListener("click",()=>{
+    if ( !difficultySet ) {
+        difficultySet = true
+        difficulty = "medium"
+        difficultyMedium.classList.add("set-difficulty")
+    } else if ( difficultySet ) {
+        document.querySelector(".set-difficulty").classList.remove("set-difficulty")
+        difficulty = "medium"
+        difficultyMedium.classList.add("set-difficulty")
+    }
+})
+difficultyHard.addEventListener("click",()=>{
+    if ( !difficultySet ) {
+        difficultySet = true
+        difficulty = "hard"
+        difficultyHard.classList.add("set-difficulty")
+    } else if ( difficultySet ) {
+        document.querySelector(".set-difficulty").classList.remove("set-difficulty")
+        difficulty = "hard"
+        difficultyHard.classList.add("set-difficulty")
+    }
+})
+
+function showEasyPresets() {
+    document.querySelectorAll(".easy-topic").forEach( (topic) =>{
+        topic.classList.remove("behind")
+    })
+}
+function showMediumPresets() {
+    document.querySelectorAll(".medium-topic").forEach( (topic) =>{
+        topic.classList.remove("behind")
+    })
+}
+function showHardPresets() {
+    document.querySelectorAll(".hard-topic").forEach( (topic) =>{
+        topic.classList.remove("behind")
+    })
+}
 
 
 let answersList = {}
@@ -195,7 +281,6 @@ let splitWordsArr = []
 let word
 let testNumber
 
-let difficulty = "hard"
 answerDisplay.classList.add(difficulty)
 
 let gridWidth = widths[difficulty]
