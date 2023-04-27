@@ -237,6 +237,9 @@ body {
     background-color: green;
     color: white;
 }
+.set-topic {
+    box-shadow: var(--set-shadow);
+}
 span {
     height: fit-content;
     width: fit-content;

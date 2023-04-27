@@ -1,10 +1,8 @@
 const alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-const wordList = ["DOG","FISH","CAT"]
-const animals= ["bear","polar bear", "elephant", "tiger", "lion", "zebra", "gorilla", "monkey", "horse", "camel", "cow", "sheep", "pig", "panda", "koala", "penguin", "dog", "cat", "rabbit", "mouse", "snake", "frog", "bird", "eagle"]
-const buildings = ["house","elementary school","junior high school","park","library","museum","city hall","hospital","bus stop","station","police station","fire station","gas station","post office","bookstore","convenience store","department store","restaurant","supermarket","flower shop","castle","shrine","temple","amusement park","aquarium","stadium","zoo","bridge","street"]
 const gridContainer = document.querySelector(".wordsearch-grid")
 const answerDisplay = document.querySelector(".answer-grid")
 
+const setupWindow = document.querySelector(".setup-window")
 const setupFirst = document.querySelector(".setup-first")
 const setupPreset = document.querySelector(".setup-preset")
 const setupRandom = document.querySelector(".setup-random")
@@ -18,9 +16,10 @@ const difficultyHard = document.querySelector(".difficulty-hard")
 const setupBack = document.querySelector(".setup-back-button")
 const setupNext = document.querySelector(".setup-next-button")
 
-
 let gridLayers
 let gridBoxes
+let gridWidth
+let gridDepth
 let abort
 let imageSelected = false
 
@@ -30,8 +29,23 @@ let inSetupRandom = false
 let inGame = false
 let setupPresetSelect = false
 let setupRandomSelect = false
-let difficultySet = false
 let difficulty
+let difficultySet = false
+let topicSet = false
+let stop = false
+let word
+let testNumber
+
+let wordCounter = 0
+
+let splitWordsArr = []
+let answerArr = []
+let sizeCheckArr = []
+let selection = []
+let randomizedArr = []
+let wordListDeploy = []
+let answersList = {}
+
 
 setupNext.addEventListener("click",()=>{
     if ( inSetupFirst ) {
@@ -72,8 +86,30 @@ setupNext.addEventListener("click",()=>{
                 }
             }
         }
+    } else if ( inSetupRandom && topicSet ) {
+        setupPreset.classList.add("behind")
+        setupRandom.classList.add("behind")
+        setupWindow.classList.add("behind")
+        inSetupPreset = false
+        inSetupRandom = false
+        setupFirst
+        inGame = true
+        beginGame()
     }
 })
+
+function beginGame() {
+    gridContainer.classList.remove("behind")
+    answerDisplay.classList.add(difficulty)
+    answerDisplay.classList.remove("behind")
+    gridWidth = widths[difficulty]
+    gridDepth = depths[difficulty]
+    sizeCheckArr = selection.filter( (word) => word.length <= (gridWidth*0.8) )
+    randomizedArr = sizeCheckArr.slice(0).sort( ()=> { return 0.5 - Math.random() } )
+    wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
+    generateGrid()
+    populateGrid()
+}
 
 setupBack.addEventListener("click",()=>{
     if ( inSetupPreset ) {
@@ -168,9 +204,22 @@ function showHardPresets() {
     })
 }
 
-
-let answersList = {}
-
+const reference = {
+    "random-colors": "colors", "preset-colors": "colors", "random-sports": "sports", "preset-sports": "sports",
+    "random-foods": "foods", "preset-foods": "foods", "random-animals": "animals", "preset-animals": "animals",
+    "random-fruitandveg": "fruitandveg", "preset-fruitandveg": "fruitandveg", "random-subjects": "subjects", "preset-subjects": "subjects",
+    "random-stationery": "stationery", "preset-stationery": "stationery", "random-desserts": "desserts", "preset-desserts": "desserts",
+    "random-months": "months", "preset-months": "months", "random-countries": "countries", "preset-countries": "countries",
+    "random-dailyactivities": "dailyactivities", "preset-dailyactivities": "dailyactivities", "random-commonitems": "commonitems",
+    "preset-commonitems": "commonitems", "random-activities": "activities", "preset-activities": "activities",
+    "random-descriptions": "descriptions", "preset-descriptions": "descriptions", "random-conditions": "conditions",
+    "preset-conditions": "conditions", "random-buildings": "buildings", "preset-buildings": "buildings",
+    "random-jobs": "jobs", "preset-jobs": "jobs", "random-clubs": "clubs", "preset-clubs": "clubs",
+    "random-actions1": "actions1", "random-actions2": "actions2", "preset-actions": "actions", "random-nature": "nature",
+    "random-body": "body", "random-school": "school", "random-schoolevents": "schoolevents", "random-shapes": "shapes",
+    "random-drinks": "drinks", "random-ingredients": "ingredients", "random-tastes": "tastes", "random-seaanimals": "seaanimals",
+    "random-clothes": "clothes", "random-vehicles": "vehicles", "random-instruments": "instruments", "random-yearlyevents": "yearlyevents",
+}
 const selectObj = {
     "feelings" : ["./images/feelings/img1.png","./images/feelings/img2.png", "./images/feelings/img3.png", "./images/feelings/img4.png", "./images/feelings/img5.png", "./images/feelings/img6.png", "./images/feelings/img7.png", "./images/feelings/img8.png", "./images/feelings/img9.png","./images/feelings/img10.png"], 
     "numbers" : ["./images/numbers/img1.png","./images/numbers/img2.png", "./images/numbers/img3.png", "./images/numbers/img4.png", "./images/numbers/img5.png", "./images/numbers/img6.png", "./images/numbers/img7.png", "./images/numbers/img8.png", "./images/numbers/img9.png", "./images/numbers/img10.png", "./images/numbers/img11.png", "./images/numbers/img12.png"], 
@@ -193,13 +242,14 @@ const selectObj = {
     "seasons" : ["./images/seasons/img1.png","./images/seasons/img2.png", "./images/seasons/img3.png", "./images/seasons/img4.png"], 
     "timesofday" : ["./images/timesofday/img1.png","./images/timesofday/img2.png", "./images/timesofday/img3.png", "./images/timesofday/img4.png"], 
     "days" : ["./images/days/img1.png","./images/days/img2.png", "./images/days/img3.png", "./images/days/img4.png","./images/days/img5.png", "./images/days/img6.png", "./images/days/img7.png"], 
-    "countries" : ["./images/countries/img1.png","./images/countries/img2.png", "./images/countries/img3.png", "./images/countries/img4.png", "./images/countries/img5.png", "./images/countries/img6.png", "./images/countries/img7.png", "./images/countries/img8.png", "./images/countries/img9.png", "./images/countries/img10.png", "./images/countries/img11.png", "./images/countries/img12.png", "./images/countries/img13.png", "./images/countries/img14.png", "./images/countries/img15.png", "./images/countries/img16.png", "./images/countries/img17.png", "./images/countries/img18.png", "./images/countries/img19.png", "./images/countries/img20.png", "./images/countries/img21.png", "./images/countries/img22.png", "./images/countries/img23.png", "./images/countries/img24.png", "./images/countries/img25.png", "./images/countries/img26.png"], 
+    "countries" : ["./images/countries/img1.png","./images/countries/img2.png", "./images/countries/img3.png", "./images/countries/img4.png", "./images/countries/img5.png", "./images/countries/img6.png", "./images/countries/img7.png", "./images/countries/img8.png", "./images/countries/img9.png", "./images/countries/img10.png", "./images/countries/img11.png", "./images/countries/img12.png", "./images/countries/img13.png", "./images/countries/img14.png", "./images/countries/img15.png", "./images/countries/img16.png", "./images/countries/img17.png", "./images/countries/img18.png", "./images/countries/img19.png", "./images/countries/img20.png", "./images/countries/img21.png", "./images/countries/img22.png", "./images/countries/img23.png", "./images/countries/img24.png", "./images/countries/img26.png"], 
     "family" : ["./images/family/img1.png","./images/family/img2.png", "./images/family/img3.png", "./images/family/img4.png", "./images/family/img5.png", "./images/family/img6.png", "./images/family/img7.png"], 
     "people" : ["./images/people/img1.png","./images/people/img2.png", "./images/people/img3.png", "./images/people/img4.png"], 
     "personalities" : ["./images/personalities/img1.png","./images/personalities/img2.png", "./images/personalities/img3.png", "./images/personalities/img4.png", "./images/personalities/img5.png", "./images/personalities/img6.png", "./images/personalities/img7.png"], 
     "actions1" : ["./images/actions1/img1.png","./images/actions1/img2.png", "./images/actions1/img3.png", "./images/actions1/img4.png", "./images/actions1/img5.png", "./images/actions1/img6.png", "./images/actions1/img7.png", "./images/actions1/img8.png", "./images/actions1/img9.png", "./images/actions1/img10.png", "./images/actions1/img11.png", "./images/actions1/img12.png", "./images/actions1/img13.png", "./images/actions1/img14.png", "./images/actions1/img15.png", "./images/actions1/img16.png", "./images/actions1/img17.png", "./images/actions1/img18.png", "./images/actions1/img19.png", "./images/actions1/img20.png", "./images/actions1/img21.png", "./images/actions1/img22.png", "./images/actions1/img23.png", "./images/actions1/img24.png", "./images/actions1/img25.png"], 
     "pastactions" : ["./images/pastactions/img1.png","./images/pastactions/img2.png", "./images/pastactions/img3.png", "./images/pastactions/img4.png", "./images/pastactions/img5.png"], 
     "actions2" : ["./images/actions2/img1.png","./images/actions2/img2.png", "./images/actions2/img3.png", "./images/actions2/img4.png", "./images/actions2/img5.png", "./images/actions2/img6.png", "./images/actions2/img7.png", "./images/actions2/img8.png", "./images/actions2/img9.png", "./images/actions2/img10.png", "./images/actions2/img11.png", "./images/actions2/img12.png", "./images/actions2/img13.png", "./images/actions2/img14.png", "./images/actions2/img15.png"], 
+    "actions" : ["./images/actions1/img1.png","./images/actions1/img2.png", "./images/actions1/img3.png", "./images/actions1/img4.png", "./images/actions1/img5.png", "./images/actions1/img6.png", "./images/actions1/img7.png", "./images/actions1/img8.png", "./images/actions1/img9.png", "./images/actions1/img10.png", "./images/actions1/img11.png", "./images/actions1/img12.png", "./images/actions1/img13.png", "./images/actions1/img14.png", "./images/actions1/img15.png", "./images/actions1/img16.png", "./images/actions1/img17.png", "./images/actions1/img18.png", "./images/actions1/img19.png", "./images/actions1/img20.png", "./images/actions1/img21.png", "./images/actions1/img22.png", "./images/actions1/img23.png", "./images/actions1/img24.png", "./images/actions1/img25.png", "./images/actions2/img1.png","./images/actions2/img2.png", "./images/actions2/img3.png", "./images/actions2/img4.png", "./images/actions2/img5.png", "./images/actions2/img6.png", "./images/actions2/img7.png", "./images/actions2/img8.png", "./images/actions2/img9.png", "./images/actions2/img10.png", "./images/actions2/img11.png", "./images/actions2/img12.png", "./images/actions2/img13.png", "./images/actions2/img14.png", "./images/actions2/img15.png"], 
     "dailyactivities" : ["./images/dailyactivities/img1.png","./images/dailyactivities/img2.png", "./images/dailyactivities/img3.png", "./images/dailyactivities/img4.png", "./images/dailyactivities/img5.png", "./images/dailyactivities/img6.png", "./images/dailyactivities/img7.png", "./images/dailyactivities/img8.png", "./images/dailyactivities/img9.png", "./images/dailyactivities/img10.png", "./images/dailyactivities/img11.png", "./images/dailyactivities/img12.png", "./images/dailyactivities/img13.png", "./images/dailyactivities/img14.png", "./images/dailyactivities/img15.png", "./images/dailyactivities/img16.png", "./images/dailyactivities/img17.png"], 
     "frequency" : ["./images/frequency/img1.png","./images/frequency/img2.png", "./images/frequency/img3.png", "./images/frequency/img4.png"], 
     "body" : ["./images/body/img1.png","./images/body/img2.png", "./images/body/img3.png", "./images/body/img4.png", "./images/body/img5.png", "./images/body/img6.png", "./images/body/img7.png", "./images/body/img8.png", "./images/body/img9.png", "./images/body/img10.png", "./images/body/img11.png", "./images/body/img12.png"], 
@@ -211,7 +261,7 @@ const selectObj = {
     "school" : ["./images/school/img1.png","./images/school/img2.png", "./images/school/img3.png", "./images/school/img4.png", "./images/school/img5.png", "./images/school/img6.png", "./images/school/img7.png", "./images/school/img8.png", "./images/school/img9.png", "./images/school/img10.png", "./images/school/img11.png", "./images/school/img12.png", "./images/school/img13.png", "./images/school/img14.png", "./images/school/img15.png", "./images/school/img16.png"], 
     "subjects" : ["./images/subjects/img1.png","./images/subjects/img2.png", "./images/subjects/img3.png", "./images/subjects/img4.png", "./images/subjects/img5.png", "./images/subjects/img6.png", "./images/subjects/img7.png", "./images/subjects/img8.png", "./images/subjects/img9.png", "./images/subjects/img10.png", "./images/subjects/img11.png"],   
     "instruments" : ["./images/instruments/img1.png","./images/instruments/img2.png", "./images/instruments/img3.png", "./images/instruments/img4.png", "./images/instruments/img5.png", "./images/instruments/img6.png", "./images/instruments/img7.png", "./images/instruments/img8.png"],   
-    "stationary" : ["./images/stationary/img1.png","./images/stationary/img2.png", "./images/stationary/img3.png", "./images/stationary/img4.png", "./images/stationary/img5.png", "./images/stationary/img6.png", "./images/stationary/img7.png", "./images/stationary/img8.png", "./images/stationary/img9.png", "./images/stationary/img10.png", "./images/stationary/img11.png", "./images/stationary/img12.png"],  
+    "stationery" : ["./images/stationary/img1.png","./images/stationary/img2.png", "./images/stationary/img3.png", "./images/stationary/img4.png", "./images/stationary/img5.png", "./images/stationary/img6.png", "./images/stationary/img7.png", "./images/stationary/img8.png", "./images/stationary/img9.png", "./images/stationary/img10.png", "./images/stationary/img11.png", "./images/stationary/img12.png"],  
     "commonitems" : ["./images/commonitems/img1.png","./images/commonitems/img2.png", "./images/commonitems/img3.png", "./images/commonitems/img4.png", "./images/commonitems/img5.png", "./images/commonitems/img6.png", "./images/commonitems/img7.png", "./images/commonitems/img8.png", "./images/commonitems/img9.png", "./images/commonitems/img10.png", "./images/commonitems/img11.png", "./images/commonitems/img12.png", "./images/commonitems/img13.png", "./images/commonitems/img14.png", "./images/commonitems/img15.png", "./images/commonitems/img16.png", "./images/commonitems/img17.png", "./images/commonitems/img18.png", "./images/commonitems/img19.png", "./images/commonitems/img20.png", "./images/commonitems/img21.png", "./images/commonitems/img22.png", "./images/commonitems/img23.png", "./images/commonitems/img24.png", "./images/commonitems/img25.png", "./images/commonitems/img26.png", "./images/commonitems/img27.png", "./images/commonitems/img28.png"],    
     "activities" : ["./images/activities/img1.png","./images/activities/img2.png", "./images/activities/img3.png", "./images/activities/img4.png", "./images/activities/img5.png", "./images/activities/img6.png", "./images/activities/img7.png", "./images/activities/img8.png", "./images/activities/img9.png", "./images/activities/img10.png", "./images/activities/img11.png", "./images/activities/img12.png", "./images/activities/img13.png", "./images/activities/img14.png"],    
     "schoolevents" : ["./images/schoolevents/img1.png","./images/schoolevents/img2.png", "./images/schoolevents/img3.png", "./images/schoolevents/img4.png", "./images/schoolevents/img5.png", "./images/schoolevents/img6.png", "./images/schoolevents/img7.png", "./images/schoolevents/img8.png", "./images/schoolevents/img9.png", "./images/schoolevents/img10.png", "./images/schoolevents/img11.png", "./images/schoolevents/img12.png", "./images/schoolevents/img13.png"],     
@@ -244,7 +294,7 @@ const allObj = {
     "./images/seasons/img1.png": "spring", "./images/seasons/img2.png": "summer", "./images/seasons/img3.png": "fall", "./images/seasons/img4.png": "winter",
     "./images/timesofday/img1.png": "morning", "./images/timesofday/img2.png": "afternoon", "./images/timesofday/img3.png": "evening", "./images/timesofday/img4.png": "night", 
     "./images/days/img1.png": "Sunday", "./images/days/img2.png": "Monday", "./images/days/img3.png": "Tuesday", "./images/days/img4.png": "Wednesday", "./images/days/img5.png": "Thursday", "./images/days/img6.png": "Friday", "./images/days/img7.png": "Saturday", 
-    "./images/countries/img1.png": "America", "./images/countries/img2.png": "Australia", "./images/countries/img3.png": "Brazil", "./images/countries/img4.png": "Canada", "./images/countries/img5.png": "China", "./images/countries/img6.png": "Egypt", "./images/countries/img7.png": "France", "./images/countries/img8.png": "Germany", "./images/countries/img9.png": "Ghana", "./images/countries/img10.png": "India", "./images/countries/img11.png": "Italy", "./images/countries/img12.png": "Japan", "./images/countries/img13.png": "Kenya", "./images/countries/img14.png": "Korea", "./images/countries/img15.png": "Mongolia", "./images/countries/img16.png": "Morocco", "./images/countries/img17.png": "Norway", "./images/countries/img18.png": "Peru", "./images/countries/img19.png": "Russia", "./images/countries/img20.png": "Singapore", "./images/countries/img21.png": "Spain", "./images/countries/img22.png": "Sweden", "./images/countries/img23.png": "Thailand", "./images/countries/img24.png": "Turkey", "./images/countries/img25.png": "U.K.", "./images/countries/img26.png": "Vietnam", 
+    "./images/countries/img1.png": "america", "./images/countries/img2.png": "australia", "./images/countries/img3.png": "brazil", "./images/countries/img4.png": "canada", "./images/countries/img5.png": "china", "./images/countries/img6.png": "egypt", "./images/countries/img7.png": "france", "./images/countries/img8.png": "germany", "./images/countries/img9.png": "ghana", "./images/countries/img10.png": "india", "./images/countries/img11.png": "italy", "./images/countries/img12.png": "japan", "./images/countries/img13.png": "kenya", "./images/countries/img14.png": "korea", "./images/countries/img15.png": "mongolia", "./images/countries/img16.png": "morocco", "./images/countries/img17.png": "norway", "./images/countries/img18.png": "peru", "./images/countries/img19.png": "russia", "./images/countries/img20.png": "singapore", "./images/countries/img21.png": "spain", "./images/countries/img22.png": "sweden", "./images/countries/img23.png": "thailand", "./images/countries/img24.png": "turkey", "./images/countries/img26.png": "vietnam", 
     "./images/family/img1.png": "grandfather", "./images/family/img2.png": "grandmother", "./images/family/img3.png": "mother", "./images/family/img4.png": "father", "./images/family/img5.png": "brother", "./images/family/img6.png": "me", "./images/family/img7.png": "sister", 
     "./images/people/img1.png": "boy", "./images/people/img2.png": "girl", "./images/people/img3.png": "friends", "./images/people/img4.png": "classmates",
     "./images/personalities/img1.png": "active", "./images/personalities/img2.png": "brave", "./images/personalities/img3.png": "friendly", "./images/personalities/img4.png": "funny", "./images/personalities/img5.png": "gentle", "./images/personalities/img6.png": "kind", "./images/personalities/img7.png": "strong",
@@ -270,8 +320,8 @@ const allObj = {
     "./images/clubactivities/img1.png": "baseball team", "./images/clubactivities/img2.png": "softball team", "./images/clubactivities/img3.png": "basketball team", "./images/clubactivities/img4.png": "volleyball team", "./images/clubactivities/img5.png": "soccer team", "./images/clubactivities/img6.png": "tennis team", "./images/clubactivities/img7.png": "table tennis team", "./images/clubactivities/img8.png": "badminton team", "./images/clubactivities/img9.png": "track and field team", "./images/clubactivities/img10.png": "gymnastics team", "./images/clubactivities/img11.png": "art club", "./images/clubactivities/img12.png": "drama club", "./images/clubactivities/img13.png": "broadcasting club", "./images/clubactivities/img14.png": "cooking club", "./images/clubactivities/img15.png": "newspaper club", "./images/clubactivities/img16.png": "photography club", "./images/clubactivities/img17.png": "brass band", "./images/clubactivities/img18.png": "chorus"
 }
 
-allImage = Object.keys(allObj)
-allText = Object.values(allObj)
+const allImage = Object.keys(allObj)
+const allText = Object.values(allObj)
 
 function getKey(obj, value) {
     return Object.keys(obj).find(key => obj[key] === value)
@@ -292,25 +342,29 @@ const levels = {
     "medium": 12,
     "hard": 18,
 }
-let splitWordsArr = []
-let word
-let testNumber
 
-answerDisplay.classList.add(difficulty)
-
-let gridWidth = widths[difficulty]
-let gridDepth = depths[difficulty]
-
-let stop = false
-
-let wordCounter = 0
-
-let sizeCheckArr = buildings.filter( (word) => word.length <= (gridWidth*0.8) )
-
-let randomizedArr = sizeCheckArr.slice(0).sort( ()=> { return 0.5 - Math.random() } )
-let wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
-
-let answerArr = []
+const allTopicButtons = document.querySelectorAll(".topic-button")
+allTopicButtons.forEach( (button)=>{
+    button.addEventListener("click",()=>{
+        if ( !topicSet ) {
+            selection = []
+            let imageArr = selectObj[reference[button.getAttribute("id")]]
+            imageArr.forEach( (image) =>{
+                selection.push(allObj[image])
+            })
+            button.classList.add("set-topic")
+            topicSet = true
+        } else if ( topicSet ) {
+            selection = []
+            document.querySelector(".set-topic").classList.remove("set-topic") 
+            let imageArr = selectObj[reference[button.getAttribute("id")]]
+            imageArr.forEach( (image) =>{
+                selection.push(allObj[image])
+            })
+            button.classList.add("set-topic")
+        }
+    })
+})
 
 function generateGrid() {
     gridContainer.classList.add(difficulty)
@@ -321,8 +375,6 @@ function generateGrid() {
     }
 }
 
-generateGrid()
-populateGrid()
 
 // let mouseDown = false
 // window.addEventListener("mousedown",(e)=>{
