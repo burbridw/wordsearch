@@ -237,7 +237,7 @@ body {
     background-color: green;
     color: white;
 }
-.set-topic {
+.set-topic, .set-preset {
     box-shadow: var(--set-shadow);
 }
 span {

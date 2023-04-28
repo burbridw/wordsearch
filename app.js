@@ -32,6 +32,9 @@ let setupRandomSelect = false
 let difficulty
 let difficultySet = false
 let topicSet = false
+let presetNumberSet = false
+let presetNumber
+let presetTopic
 let stop = false
 let word
 let testNumber
@@ -45,7 +48,6 @@ let selection = []
 let randomizedArr = []
 let wordListDeploy = []
 let answersList = {}
-
 
 setupNext.addEventListener("click",()=>{
     if ( inSetupFirst ) {
@@ -90,15 +92,91 @@ setupNext.addEventListener("click",()=>{
         setupPreset.classList.add("behind")
         setupRandom.classList.add("behind")
         setupWindow.classList.add("behind")
-        inSetupPreset = false
         inSetupRandom = false
-        setupFirst
         inGame = true
-        beginGame()
+        beginGameRandom()
+    } else if ( inSetupPreset && topicSet && presetNumberSet ) {
+        setupRandom.classList.add("behind")
+        setupPreset.classList.add("behind")
+        setupWindow.classList.add("behind")
+        inSetupPreset = false
+        inGame = true
+        beginGamePreset(allPresets[presetTopic][difficulty][presetNumber])
     }
 })
 
-function beginGame() {
+function beginGamePreset(obj) {
+    gridWidth = widths[difficulty]
+    gridDepth = depths[difficulty]
+    gridContainer.classList.remove("behind")
+    answerDisplay.classList.add(difficulty)
+    answerDisplay.classList.remove("behind")
+    answersList = obj
+    console.log(answersList)
+    generateGrid()
+    gridBoxes = document.querySelectorAll(".grid-box")
+    let presetWordsList = Object.keys(obj)
+    let presetIndexList = Object.values(obj)
+    presetWordsList.forEach( (word)=>{
+        let splitPresetWord = word.replaceAll(" ","").toUpperCase().split("")
+        let presetIndex = obj[word]
+        for ( let i = 0; i < splitPresetWord.length; i++ ) {
+            gridBoxes[presetIndex[i]].children[0].textContent = splitPresetWord[i]
+            gridBoxes[presetIndex[i]].classList.add("filled")
+        }
+        let finalWord = word
+        let wordImage = getKey(allObj,word)
+        answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${word}</span></div>`
+        
+    })
+    gridBoxes.forEach( (box) =>{
+        box.addEventListener("click",()=>{
+            if ( !box.classList.contains("answer-finished") ) {
+                if ( !box.classList.contains("selected") ) {
+                    box.classList.add("selected")
+                    checkAnswer(answerArr)
+                } else {
+                    box.classList.remove("selected")
+                }
+            }
+        })
+        if ( !box.classList.contains("filled") ) {
+            box.children[0].textContent = alphabet[ Math.floor( Math.random()*26 ) ]
+        }
+    })
+    let allAnswerImages = document.querySelectorAll(".answer-image-box")
+    allAnswerImages.forEach( (image)=>{
+        image.addEventListener("click",()=>{
+            if ( !image.classList.contains("answer-finished") ) {
+                if ( imageSelected && !image.classList.contains("selected-image") ) {
+                    document.querySelector(".selected-image").classList.remove("selected-image")
+                    document.querySelectorAll(".answer").forEach( (answer) =>{
+                        answer.classList.remove("answer")
+                    })
+                }
+                if ( !image.classList.contains("selected-image") ) {
+                    image.classList.add("selected-image")
+                    imageSelected = true
+                    let targetImage = image.children[0].getAttribute("src")
+                    let targetName = allObj[targetImage]
+                    answerArr = answersList[targetName]
+                    console.log(answerArr)
+                    markAnswer(answerArr)
+                    checkAnswer(answerArr)
+                } else {
+                    image.classList.remove("selected-image")
+                    imageSelected = false
+                    let allAnswerImages = document.querySelectorAll(".answer")
+                    allAnswerImages.forEach( (answer) =>{
+                        answer.classList.remove("answer")
+                    })
+                }
+            }
+        })
+    })
+}
+
+function beginGameRandom() {
     gridContainer.classList.remove("behind")
     answerDisplay.classList.add(difficulty)
     answerDisplay.classList.remove("behind")
@@ -214,7 +292,7 @@ const reference = {
     "preset-commonitems": "commonitems", "random-activities": "activities", "preset-activities": "activities",
     "random-descriptions": "descriptions", "preset-descriptions": "descriptions", "random-conditions": "conditions",
     "preset-conditions": "conditions", "random-buildings": "buildings", "preset-buildings": "buildings",
-    "random-jobs": "jobs", "preset-jobs": "jobs", "random-clubs": "clubs", "preset-clubs": "clubs",
+    "random-jobs": "jobs", "preset-jobs": "jobs", "random-clubs": "clubactivities", "preset-clubs": "clubactivities",
     "random-actions1": "actions1", "random-actions2": "actions2", "preset-actions": "actions", "random-nature": "nature",
     "random-body": "body", "random-school": "school", "random-schoolevents": "schoolevents", "random-shapes": "shapes",
     "random-drinks": "drinks", "random-ingredients": "ingredients", "random-tastes": "tastes", "random-seaanimals": "seaanimals",
@@ -290,7 +368,7 @@ const allObj = {
     "./images/seaanimals/img1.png": "whale", "./images/seaanimals/img2.png": "shark", "./images/seaanimals/img3.png": "dolphin", "./images/seaanimals/img4.png": "sea turtle", "./images/seaanimals/img5.png": "fish", "./images/seaanimals/img6.png": "squid", "./images/seaanimals/img7.png": "jellyfish", "./images/seaanimals/img8.png": "shrimp", 
     "./images/bugs/img1.png": "ant", "./images/bugs/img2.png": "butterfly", "./images/bugs/img3.png": "grasshopper", "./images/bugs/img4.png": "spider", 
     "./images/nature/img1.png": "desert", "./images/nature/img2.png": "forest", "./images/nature/img3.png": "island", "./images/nature/img4.png": "lake", "./images/nature/img5.png": "mountain", "./images/nature/img6.png": "pond", "./images/nature/img7.png": "river", "./images/nature/img8.png": "savanna", "./images/nature/img9.png": "sea", "./images/nature/img10.png": "wetlands", "./images/nature/img11.png": "flower", "./images/nature/img12.png": "tree", 
-    "./images/months/img1.png": "January", "./images/months/img2.png": "February", "./images/months/img3.png": "March", "./images/months/img4.png": "April", "./images/months/img5.png": "May", "./images/months/img6.png": "June", "./images/months/img7.png": "July", "./images/months/img8.png": "August", "./images/months/img9.png": "September", "./images/months/img10.png": "October", "./images/months/img11.png": "November", "./images/months/img12.png": "December", 
+    "./images/months/img1.png": "january", "./images/months/img2.png": "february", "./images/months/img3.png": "march", "./images/months/img4.png": "april", "./images/months/img5.png": "may", "./images/months/img6.png": "june", "./images/months/img7.png": "july", "./images/months/img8.png": "august", "./images/months/img9.png": "september", "./images/months/img10.png": "october", "./images/months/img11.png": "november", "./images/months/img12.png": "december", 
     "./images/seasons/img1.png": "spring", "./images/seasons/img2.png": "summer", "./images/seasons/img3.png": "fall", "./images/seasons/img4.png": "winter",
     "./images/timesofday/img1.png": "morning", "./images/timesofday/img2.png": "afternoon", "./images/timesofday/img3.png": "evening", "./images/timesofday/img4.png": "night", 
     "./images/days/img1.png": "Sunday", "./images/days/img2.png": "Monday", "./images/days/img3.png": "Tuesday", "./images/days/img4.png": "Wednesday", "./images/days/img5.png": "Thursday", "./images/days/img6.png": "Friday", "./images/days/img7.png": "Saturday", 
@@ -307,7 +385,7 @@ const allObj = {
     "./images/locations/img1.png": "by", "./images/locations/img2.png": "in", "./images/locations/img3.png": "on", "./images/locations/img4.png": "under",
     "./images/vehicles/img1.png": "bus", "./images/vehicles/img2.png": "car", "./images/vehicles/img3.png": "taxi", "./images/vehicles/img4.png": "truck", "./images/vehicles/img5.png": "train", "./images/vehicles/img6.png": "subway", "./images/vehicles/img7.png": "ship", "./images/vehicles/img8.png": "boat", "./images/vehicles/img9.png": "airplane", "./images/vehicles/img10.png": "bike",
     "./images/school/img1.png": "classroom", "./images/school/img2.png": "library", "./images/school/img3.png": "music room", "./images/school/img4.png": "gym", "./images/school/img5.png": "playground", "./images/school/img6.png": "swimming pool", "./images/school/img7.png": "teachers office", "./images/school/img8.png": "school nurses office", "./images/school/img9.png": "school principals office", "./images/school/img10.png": "entrance", "./images/school/img11.png": "restroom", "./images/school/img12.png": "science room", "./images/school/img13.png": "computer room", "./images/school/img14.png": "cooking room", "./images/school/img15.png": "arts and crafts room", "./images/school/img16.png": "lunch room", 
-    "./images/subjects/img1.png": "English", "./images/subjects/img2.png": "Japanese", "./images/subjects/img3.png": "caligraphy", "./images/subjects/img4.png": "social studies", "./images/subjects/img5.png": "math", "./images/subjects/img6.png": "science", "./images/subjects/img7.png": "music", "./images/subjects/img8.png": "arts and crafts", "./images/subjects/img9.png": "home economics", "./images/subjects/img10.png": "p.e", "./images/subjects/img11.png": "moral education",
+    "./images/subjects/img1.png": "english", "./images/subjects/img2.png": "japanese", "./images/subjects/img3.png": "caligraphy", "./images/subjects/img4.png": "social studies", "./images/subjects/img5.png": "math", "./images/subjects/img6.png": "science", "./images/subjects/img7.png": "music", "./images/subjects/img8.png": "arts and crafts", "./images/subjects/img9.png": "home economics", "./images/subjects/img10.png": "p.e", "./images/subjects/img11.png": "moral education",
     "./images/instruments/img1.png": "recorder", "./images/instruments/img2.png": "harmonica", "./images/instruments/img3.png": "triangle", "./images/instruments/img4.png": "piano", "./images/instruments/img5.png": "guitar", "./images/instruments/img6.png": "violin", "./images/instruments/img7.png": "drum", "./images/instruments/img8.png": "xylophone",
     "./images/stationary/img1.png": "crayon", "./images/stationary/img2.png": "marker", "./images/stationary/img3.png": "pen", "./images/stationary/img4.png": "pencil", "./images/stationary/img5.png": "pencil case", "./images/stationary/img6.png": "pencil sharpener", "./images/stationary/img7.png": "eraser", "./images/stationary/img8.png": "ruler", "./images/stationary/img9.png": "glue", "./images/stationary/img10.png": "scissors", "./images/stationary/img11.png": "stapler", "./images/stationary/img12.png": "notebook",
     "./images/commonitems/img1.png": "ball", "./images/commonitems/img2.png": "bat", "./images/commonitems/img3.png": "racket", "./images/commonitems/img4.png": "bag", "./images/commonitems/img5.png": "plastic bag", "./images/commonitems/img6.png": "basket", "./images/commonitems/img7.png": "box", "./images/commonitems/img8.png": "cup", "./images/commonitems/img9.png": "watch", "./images/commonitems/img10.png": "clock", "./images/commonitems/img11.png": "book", "./images/commonitems/img12.png": "textbook", "./images/commonitems/img13.png": "comic book", "./images/commonitems/img14.png": "computer", "./images/commonitems/img15.png": "calendar", "./images/commonitems/img16.png": "map", "./images/commonitems/img17.png": "pictures", "./images/commonitems/img18.png": "umbrella", "./images/commonitems/img19.png": "present", "./images/commonitems/img20.png": "treasure", "./images/commonitems/img21.png": "desk", "./images/commonitems/img22.png": "chair", "./images/commonitems/img23.png": "wheelchair", "./images/commonitems/img24.png": "table", "./images/commonitems/img25.png": "bath", "./images/commonitems/img26.png": "bed", "./images/commonitems/img27.png": "wall", "./images/commonitems/img28.png": "window",
@@ -317,7 +395,7 @@ const allObj = {
     "./images/conditions/img1.png": "big", "./images/conditions/img2.png": "small", "./images/conditions/img3.png": "long", "./images/conditions/img4.png": "short", "./images/conditions/img5.png": "new", "./images/conditions/img6.png": "old", "./images/conditions/img7.png": "easy", "./images/conditions/img8.png": "difficult", "./images/conditions/img9.png": "same", "./images/conditions/img10.png": "different", "./images/conditions/img11.png": "fast", "./images/conditions/img12.png": "slow", 
     "./images/descriptions/img1.png": "good", "./images/descriptions/img2.png": "great", "./images/descriptions/img3.png": "nice", "./images/descriptions/img4.png": "fantastic", "./images/descriptions/img5.png": "wonderful", "./images/descriptions/img6.png": "beautiful", "./images/descriptions/img7.png": "cool", "./images/descriptions/img8.png": "cute", "./images/descriptions/img9.png": "favorite", "./images/descriptions/img10.png": "interesting", "./images/descriptions/img11.png": "exciting", "./images/descriptions/img12.png": "famous", "./images/descriptions/img13.png": "popular", "./images/descriptions/img14.png": "international", "./images/descriptions/img15.png": "fun",
     "./images/jobs/img1.png": "artist", "./images/jobs/img2.png": "musician", "./images/jobs/img3.png": "singer", "./images/jobs/img4.png": "comedian", "./images/jobs/img5.png": "doctor", "./images/jobs/img6.png": "nurse", "./images/jobs/img7.png": "dentist", "./images/jobs/img8.png": "vet", "./images/jobs/img9.png": "zookeeper", "./images/jobs/img10.png": "cook", "./images/jobs/img11.png": "baker", "./images/jobs/img12.png": "florist", "./images/jobs/img13.png": "farmer", "./images/jobs/img14.png": "police officer", "./images/jobs/img15.png": "fire fighter", "./images/jobs/img16.png": "pilot", "./images/jobs/img17.png": "flight attendant", "./images/jobs/img18.png": "bus driver", "./images/jobs/img19.png": "astronaut", "./images/jobs/img20.png": "teacher", "./images/jobs/img21.png": "scientist", "./images/jobs/img22.png": "programmer", "./images/jobs/img23.png": "baseball player", "./images/jobs/img24.png": "soccer player", "./images/jobs/img25.png": "figure skater", 
-    "./images/clubactivities/img1.png": "baseball team", "./images/clubactivities/img2.png": "softball team", "./images/clubactivities/img3.png": "basketball team", "./images/clubactivities/img4.png": "volleyball team", "./images/clubactivities/img5.png": "soccer team", "./images/clubactivities/img6.png": "tennis team", "./images/clubactivities/img7.png": "table tennis team", "./images/clubactivities/img8.png": "badminton team", "./images/clubactivities/img9.png": "track and field team", "./images/clubactivities/img10.png": "gymnastics team", "./images/clubactivities/img11.png": "art club", "./images/clubactivities/img12.png": "drama club", "./images/clubactivities/img13.png": "broadcasting club", "./images/clubactivities/img14.png": "cooking club", "./images/clubactivities/img15.png": "newspaper club", "./images/clubactivities/img16.png": "photography club", "./images/clubactivities/img17.png": "brass band", "./images/clubactivities/img18.png": "chorus"
+    "./images/clubactivities/img1.png": "baseball", "./images/clubactivities/img2.png": "softball", "./images/clubactivities/img3.png": "basketball", "./images/clubactivities/img4.png": "volleyball", "./images/clubactivities/img5.png": "soccer", "./images/clubactivities/img6.png": "tennis", "./images/clubactivities/img7.png": "table tennis", "./images/clubactivities/img8.png": "badminton", "./images/clubactivities/img9.png": "track and field", "./images/clubactivities/img10.png": "gymnastics", "./images/clubactivities/img11.png": "art", "./images/clubactivities/img12.png": "drama", "./images/clubactivities/img13.png": "broadcasting", "./images/clubactivities/img14.png": "cooking", "./images/clubactivities/img15.png": "newspaper", "./images/clubactivities/img16.png": "photography", "./images/clubactivities/img17.png": "brass band", "./images/clubactivities/img18.png": "chorus"
 }
 
 const allImage = Object.keys(allObj)
@@ -362,6 +440,29 @@ allTopicButtons.forEach( (button)=>{
                 selection.push(allObj[image])
             })
             button.classList.add("set-topic")
+        }
+    })
+})
+
+const allPresetTopicButtons = document.querySelectorAll(".preset-topic-button")
+allPresetTopicButtons.forEach( (topic) =>{
+    topic.addEventListener("click",()=> {
+        presetTopic = topic.getAttribute("id")
+    })
+})
+
+
+const allPresetNumberButtons = document.querySelectorAll(".preset-number")
+allPresetNumberButtons.forEach( (preset) =>{
+    preset.addEventListener("click",()=>{
+        if ( !presetNumberSet ) {
+            presetNumber = preset.getAttribute("id")
+            preset.classList.add("set-preset")
+            presetNumberSet = true
+        } else if ( presetNumberSet ) {
+            document.querySelector(".set-preset").classList.remove("set-preset")
+            presetNumber = preset.getAttribute("id")
+            preset.classList.add("set-preset")
         }
     })
 })
@@ -442,6 +543,7 @@ function checkAnswer(answerArr) {
 }
 
 
+
 function markAnswer(answerArr) {
     gridBoxes = document.querySelectorAll(".grid-box")
     answerArr.forEach( (index) =>{
@@ -454,6 +556,7 @@ function populateGrid() {
         stop = false
         setRandomStart(wordListDeploy[wordCounter])
     } else {
+        console.log(answersList)
         gridBoxes = document.querySelectorAll(".grid-box")
         gridBoxes.forEach( (box) =>{
             box.addEventListener("click",()=>{
@@ -664,4 +767,53 @@ function goDiagonal(word,index) {
     answersList[answerWord] = tempAnswerIndexes
     answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
+}
+
+const allPresets = {
+    "preset-sports": {
+        "easy": {
+            "preset1": {"badminton": [12, 13, 14, 15, 16, 17, 18, 19, 20],"dodgeball": [50, 51, 52,  53, 54, 55, 56, 57, 58], "swimming": [ 86, 87,88,89,90,91,92,93],"softball": [11,23,35,47,59,71,83,95],"skating": [73,74,75,76,77,78,79],"tennis": [61,62,63,64,65,66],"soccer": [41,42,43,44,45,46],"skiing": [1,2,3,4,5,6]},
+            "preset2": {"badminton": [60,61,62,63,64,65,66,67,68],"dodgeball": [12,13,14,15,16,17,18,19,20],"softball": [84,85,86,87,88,89,90,91],"baseball": [11,23,35,47,59,71,83,95],"swimming": [39,40,41,42,43,44,45,46],"skating": [75,76,77,78,79,80,81],"soccer": [26,27,28,29,30,31],"skiing": [49,50,51,52,53,54]},
+            "preset3": {"badminton": [86,87,88,89,90,91,92,93,94],"dodgeball": [2,3,4,5,6,7,8,9,10],"swimming": [48,49,50,51,52,53,54,55],"softball": [73,74,75,76,77,78,79,80],"skating": [36,37,38,39,40,41,42],"soccer": [64,65,66,67,68,69],"tennis": [22,34,46,58,70,82],"skiing": [26,27,28,29,30,31]},
+            "preset4": {"dodgeball": [72,73,74,75,76,77,78,79,80],"badminton": [48,49,50,51,52,53,54,55,56],"softball": [3,4,5,6,7,8,9,10],"baseball": [38,39,40,41,42,43,44,45],"swimming": [24,25,26,27,28,29,30,31],"skating": [15,16,17,18,19,20,21],"tennis": [61,62,63,64,65,66],"soccer": [87,88,89,90,91,92]},
+            "preset5": {"badminton": [60,61,62,63,64,65,66,67,68],"dodgeball": [12,13,14,15,16,17,18,19,20],"swimming": [36,37,38,39,40,41,42,43],"baseball": [25,26,27,28,29,30,31,32],"softball": [75,76,77,78,79,80,81,82],"skating": [87,88,89,90,91,92,93],"tennis": [10,22,34,46,58,70],"skiing": [48,49,50,51,52,53]},
+            "preset6": {"dodgeball": [72,73,74,75,76,77,78,79,80],"badminton": [14,15,16,17,18,19,20,21,22],"baseball": [63,64,65,66,67,68,69,70],"swimming": [48,49,50,51,52,53,54,55],"softball": [2,3,4,5,6,7,8,9],"skating": [84,85,86,87,88,89,90],"soccer": [41,42,43,44,45,46],"tennis": [25,26,27,28,29,30]},
+            "preset7": {"badminton": [12,13,14,15,16,17,18,19,20],"baseball": [85,86,87,88,89,90,91,92],"swimming": [24,25,26,27,28,29,30,31],"softball": [2,3,4,5,6,7,8,9],"skating": [39,40,41,42,43,44,45],"soccer": [35,47,59,71,83,95],"tennis": [50,51,52,53,54,55],"skiing": [10,22,34,46,58,70]},
+            "preset8": {"badminton": [37,38,39,40,41,42,43,44,45],"dodgeball": [12,13,14,15,16,17,18,19,20],"swimming": [63,64,65,66,67,68,69,70],"baseball": [0,1,2,3,4,5,6,7],"softball": [11,23,35,47,59,71,83,95],"skating": [24,25,26,27,28,29,30],"tennis": [49,50,51,52,53,54],"skiing": [24,36,48,60,72,84]},
+            "preset9": {"dodgeball": [38,39,40,41,42,43,44,45,46],"badminton": [61,62,63,64,65,66,67,68,69],"baseball": [49,50,51,52,53,54,55,56],"softball": [11,23,35,47,59,71,83,95],"skating": [76,77,78,79,80,81,82],"skiing": [13,14,15,16,17,18],"soccer": [0,12,24,36,48,60],"tennis": [84,85,86,87,88,89]},
+            "preset10": {"dodgeball": [49,50,51,52,53,54,55,56,57],"badminton": [12,13,14,15,16,17,18,19,20],"softball": [75,76,77,78,79,80,81,82],"swimming": [11,23,35,47,59,71,83,95],"baseball": [0,1,2,3,4,5,6,7],"skating": [88,89,90,91,92,93,94],"skiing": [36,37,38,39,40,41],"soccer": [60,61,62,63,64,65]},
+            "preset11": { "dodgeball": [ 14, 15, 16, 17, 18, 19, 20, 21, 22 ], "badminton": [ 37, 38, 39, 40, 41, 42, 43, 44, 45 ], "swimming": [ 51, 52, 53, 54, 55, 56, 57, 58 ], "softball": [ 3, 4, 5, 6, 7, 8, 9, 10 ], "skating": [ 88, 89, 90, 91, 92, 93, 94 ], "skiing": [ 75, 76, 77, 78, 79, 80 ], "tennis": [ 23, 35, 47, 59, 71, 83 ], "soccer": [ 62, 63, 64, 65, 66, 67 ] },
+            "preset12": { "dodgeball": [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], "softball": [ 87, 88, 89, 90, 91, 92, 93, 94 ], "baseball": [ 62, 63, 64, 65, 66, 67, 68, 69 ], "swimming": [ 25, 26, 27, 28, 29, 30, 31, 32 ], "skating": [ 48, 49, 50, 51, 52, 53, 54 ], "tennis": [ 39, 40, 41, 42, 43, 44 ], "soccer": [ 75, 76, 77, 78, 79, 80 ], "skiing": [ 35, 47, 59, 71, 83, 95 ] },
+            "preset13": {},
+            "preset14": {},
+            "preset15": {},
+            "preset16": {},
+            "preset17": {},
+            "preset18": {},
+            "preset19": {},
+            "preset20": {},
+        },
+        "medium": {
+            "preset1": { "table tennis": [ 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87 ], "basketball": [ 124, 125, 126, 127, 128, 129, 130, 131, 132, 133 ], "volleyball": [ 137, 138, 139, 140, 141, 142, 143, 144, 145, 146 ], "badminton": [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ], "dodgeball": [ 63, 64, 65, 66, 67, 68, 69, 70, 71 ], "baseball": [ 49, 50, 51, 52, 53, 54, 55, 56 ], "softball": [ 19, 20, 21, 22, 23, 24, 25, 26 ], "swimming": [ 107, 108, 109, 110, 111, 112, 113, 114 ], "skating": [ 30, 45, 60, 75, 90, 105, 120 ], "tennis": [ 61, 76, 91, 106, 121, 136 ], "skiing": [ 31, 32, 33, 34, 35, 36 ], "soccer": [ 59, 74, 89, 104, 119, 134 ] },
+            "preset2": { "table tennis": [ 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86 ], "volleyball": [ 13, 28, 43, 58, 73, 88, 103, 118, 133, 148 ], "basketball": [ 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 ], "badminton": [ 137, 138, 139, 140, 141, 142, 143, 144, 145 ], "dodgeball": [ 27, 42, 57, 72, 87, 102, 117, 132, 147 ], "swimming": [ 49, 50, 51, 52, 53, 54, 55, 56 ], "softball": [ 4, 5, 6, 7, 8, 9, 10, 11 ], "baseball": [ 61, 62, 63, 64, 65, 66, 67, 68 ], "skating": [ 14, 29, 44, 59, 74, 89, 104 ], "skiing": [ 60, 75, 90, 105, 120, 135 ], "soccer": [ 106, 107, 108, 109, 110, 111 ], "tennis": [ 81, 82, 83, 84, 85, 86 ] },
+            "preset3": { "table tennis": [ 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146 ], "basketball": [ 106, 107, 108, 109, 110, 111, 112, 113, 114, 115 ], "volleyball": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ], "dodgeball": [ 95, 96, 97, 98, 99, 100, 101, 102, 103 ], "badminton": [ 65, 66, 67, 68, 69, 70, 71, 72, 73 ], "baseball": [ 50, 51, 52, 53, 54, 55, 56, 57 ], "softball": [ 17, 18, 19, 20, 21, 22, 23, 24 ], "swimming": [ 123, 124, 125, 126, 127, 128, 129, 130 ], "skating": [ 81, 82, 83, 84, 85, 86, 87 ], "tennis": [ 59, 74, 89, 104, 119, 134 ], "skiing": [ 37, 38, 39, 40, 41, 42 ], "soccer": [ 75, 76, 77, 78, 79, 80 ] },
+            "preset4": { "table tennis": [ 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ], "basketball": [ 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 ], "volleyball": [ 91, 92, 93, 94, 95, 96, 97, 98, 99, 100 ], "dodgeball": [ 5, 6, 7, 8, 9, 10, 11, 12, 13 ], "badminton": [ 137, 138, 139, 140, 141, 142, 143, 144, 145 ], "swimming": [ 43, 58, 73, 88, 103, 118, 133, 148 ], "baseball": [ 15, 30, 45, 60, 75, 90, 105, 120 ], "softball": [ 121, 122, 123, 124, 125, 126, 127, 128 ], "skating": [ 29, 44, 59, 74, 89, 104, 119 ], "skiing": [ 71, 86, 101, 116, 131, 146 ], "soccer": [ 109, 110, 111, 112, 113, 114 ], "tennis": [ 42, 57, 72, 87, 102, 117 ] },
+            "preset5": { "table tennis": [ 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85 ], "volleyball": [ 61, 62, 63, 64, 65, 66, 67, 68, 69, 70 ], "basketball": [ 49, 50, 51, 52, 53, 54, 55, 56, 57, 58 ], "badminton": [ 135, 136, 137, 138, 139, 140, 141, 142, 143 ], "dodgeball": [ 5, 6, 7, 8, 9, 10, 11, 12, 13 ], "softball": [ 90, 91, 92, 93, 94, 95, 96, 97 ], "baseball": [ 30, 31, 32, 33, 34, 35, 36, 37 ], "swimming": [ 120, 121, 122, 123, 124, 125, 126, 127 ], "skating": [ 105, 106, 107, 108, 109, 110, 111 ], "skiing": [ 20, 21, 22, 23, 24, 25 ], "soccer": [ 72, 87, 102, 117, 132, 147 ], "tennis": [ 59, 74, 89, 104, 119, 134 ] },
+            "preset6": { "table tennis": [ 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116 ], "volleyball": [ 123, 124, 125, 126, 127, 128, 129, 130, 131, 132 ], "basketball": [ 93, 94, 95, 96, 97, 98, 99, 100, 101, 102 ], "badminton": [ 61, 62, 63, 64, 65, 66, 67, 68, 69 ], "dodgeball": [ 135, 136, 137, 138, 139, 140, 141, 142, 143 ], "swimming": [ 16, 17, 18, 19, 20, 21, 22, 23 ], "baseball": [ 48, 49, 50, 51, 52, 53, 54, 55 ], "softball": [ 15, 30, 45, 60, 75, 90, 105, 120 ], "skating": [ 28, 43, 58, 73, 88, 103, 118 ], "tennis": [ 14, 29, 44, 59, 74, 89 ], "soccer": [ 3, 4, 5, 6, 7, 8 ], "skiing": [ 31, 32, 33, 34, 35, 36 ] },
+            "preset7": {"badminton": [12,13,14,15,16,17,18,19,20],"baseball": [85,86,87,88,89,90,91,92],"swimming": [24,25,26,27,28,29,30,31],"softball": [2,3,4,5,6,7,8,9],"skating": [39,40,41,42,43,44,45],"soccer": [35,47,59,71,83,95],"tennis": [50,51,52,53,54,55],"skiing": [10,22,34,46,58,70]},
+            "preset8": {"badminton": [37,38,39,40,41,42,43,44,45],"dodgeball": [12,13,14,15,16,17,18,19,20],"swimming": [63,64,65,66,67,68,69,70],"baseball": [0,1,2,3,4,5,6,7],"softball": [11,23,35,47,59,71,83,95],"skating": [24,25,26,27,28,29,30],"tennis": [49,50,51,52,53,54],"skiing": [24,36,48,60,72,84]},
+            "preset9": {"dodgeball": [38,39,40,41,42,43,44,45,46],"badminton": [61,62,63,64,65,66,67,68,69],"baseball": [49,50,51,52,53,54,55,56],"softball": [11,23,35,47,59,71,83,95],"skating": [76,77,78,79,80,81,82],"skiing": [13,14,15,16,17,18],"soccer": [0,12,24,36,48,60],"tennis": [84,85,86,87,88,89]},
+            "preset10": {"dodgeball": [49,50,51,52,53,54,55,56,57],"badminton": [12,13,14,15,16,17,18,19,20],"softball": [75,76,77,78,79,80,81,82],"swimming": [11,23,35,47,59,71,83,95],"baseball": [0,1,2,3,4,5,6,7],"skating": [88,89,90,91,92,93,94],"skiing": [36,37,38,39,40,41],"soccer": [60,61,62,63,64,65]},
+            "preset11": { "dodgeball": [ 14, 15, 16, 17, 18, 19, 20, 21, 22 ], "badminton": [ 37, 38, 39, 40, 41, 42, 43, 44, 45 ], "swimming": [ 51, 52, 53, 54, 55, 56, 57, 58 ], "softball": [ 3, 4, 5, 6, 7, 8, 9, 10 ], "skating": [ 88, 89, 90, 91, 92, 93, 94 ], "skiing": [ 75, 76, 77, 78, 79, 80 ], "tennis": [ 23, 35, 47, 59, 71, 83 ], "soccer": [ 62, 63, 64, 65, 66, 67 ] },
+            "preset12": { "dodgeball": [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], "softball": [ 87, 88, 89, 90, 91, 92, 93, 94 ], "baseball": [ 62, 63, 64, 65, 66, 67, 68, 69 ], "swimming": [ 25, 26, 27, 28, 29, 30, 31, 32 ], "skating": [ 48, 49, 50, 51, 52, 53, 54 ], "tennis": [ 39, 40, 41, 42, 43, 44 ], "soccer": [ 75, 76, 77, 78, 79, 80 ], "skiing": [ 35, 47, 59, 71, 83, 95 ] },
+            "preset13": {},
+            "preset14": {},
+            "preset15": {},
+            "preset16": {},
+            "preset17": {},
+            "preset18": {},
+            "preset19": {},
+            "preset20": {},
+        }
+    }
 }
