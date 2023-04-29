@@ -16,6 +16,9 @@ const difficultyHard = document.querySelector(".difficulty-hard")
 const setupBack = document.querySelector(".setup-back-button")
 const setupNext = document.querySelector(".setup-next-button")
 
+const gameBackButton = document.querySelector(".wordsearch-back")
+const gameResetButton = document.querySelector(".wordsearch-reset")
+
 let gridLayers
 let gridBoxes
 let gridWidth
@@ -38,6 +41,7 @@ let presetTopic
 let stop = false
 let word
 let testNumber
+let gameType
 
 let wordCounter = 0
 
@@ -97,6 +101,7 @@ setupNext.addEventListener("click",()=>{
         setupWindow.classList.add("behind")
         inSetupRandom = false
         inGame = true
+        gameType = "random"
         beginGameRandom()
     } else if ( inSetupPreset && topicSet && presetNumberSet ) {
         setupRandom.classList.add("behind")
@@ -104,6 +109,7 @@ setupNext.addEventListener("click",()=>{
         setupWindow.classList.add("behind")
         inSetupPreset = false
         inGame = true
+        gameType = "preset"
         beginGamePreset(allPresets[presetTopic][difficulty][presetNumber])
     }
 })
@@ -114,6 +120,7 @@ function beginGamePreset(obj) {
     gridContainer.classList.remove("behind")
     answerDisplay.classList.add(difficulty)
     answerDisplay.classList.remove("behind")
+    document.querySelectorAll(".game-button").forEach( (button)=>{ button.classList.remove("behind") } )
     answersList = obj
     generateGrid()
     gridBoxes = document.querySelectorAll(".grid-box")
@@ -181,6 +188,7 @@ function beginGameRandom() {
     gridContainer.classList.remove("behind")
     answerDisplay.classList.add(difficulty)
     answerDisplay.classList.remove("behind")
+    document.querySelectorAll(".game-button").forEach( (button)=>{ button.classList.remove("behind") } )
     gridWidth = widths[difficulty]
     gridDepth = depths[difficulty]
     sizeCheckArr = selection.filter( (word) => word.length <= (gridWidth*0.8) )
@@ -189,7 +197,36 @@ function beginGameRandom() {
     generateGrid()
     populateGrid()
 }
+let remake = false
 
+gameResetButton.addEventListener("click",()=>{
+    if ( gameType === "random" ) {
+        wordCounter = 0
+        answerDisplay.innerHTML = ""
+        randomizedArr = sizeCheckArr.slice(0).sort( ()=> { return 0.5 - Math.random() } )
+        wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
+        generateGrid()
+        populateGrid()
+        // beginGameRandom()
+    }
+})
+
+gameBackButton.addEventListener("click",()=>{
+    if ( inGame ) {
+        gridContainer.className = "wordsearch-grid behind"
+        answerDisplay.className = "answer-grid behind"
+        inGame = false
+        setupWindow.classList.remove("behind")
+        setupFirst.classList.remove("behind")
+        inSetupFirst = true
+        switch(gameType) {
+            case "preset": 
+            topicSet = false
+            presetNumberSet = false
+        }
+
+    }
+})
 setupBack.addEventListener("click",()=>{
     if ( inSetupPreset ) {
         setupPreset.classList.add("behind")
@@ -490,7 +527,6 @@ function generateGrid() {
 //         target.parentElement.classList.add("selected")
 //     }
 // })
-
 // window.addEventListener("mousemove",(e)=> {
 //     e.preventDefault()
 //     let moveTarget = document.elementFromPoint(e.x,e.y)
@@ -506,12 +542,9 @@ function generateGrid() {
 // window.addEventListener("mouseup",(e)=>{
 //     mouseDown = false
 // })
-
 // window.addEventListener("touchmove",getTouchPosition)
-
 // let touchX = 0
 // let touchY = 0
-
 // function getTouchPosition(event) {
 //     let touch = event.touches[0]
 //     touchX = Math.floor(touch.pageX)
@@ -553,80 +586,69 @@ function markAnswer(answerArr) {
     })
 }
 
-let dataCount = 1
 
 function populateGrid() {
     if ( wordCounter < levels[difficulty] ) {
         stop = false
         setRandomStart(wordListDeploy[wordCounter])
     } else {
-        if ( dataCount < 21 ) {
-            wordCounter = 0
-            dataSet["preset"+dataCount] = answersList
-            answersList = {}
-            dataCount++
-            beginGameRandom()
-        } else {
-            console.log(dataSet)
-        }
-    //     console.log(answersList)
-        // gridBoxes = document.querySelectorAll(".grid-box")
-        // gridBoxes.forEach( (box) =>{
-        //     box.addEventListener("click",()=>{
-        //         if ( !box.classList.contains("answer-finished") ) {
-        //             if ( !box.classList.contains("selected") ) {
-        //                 box.classList.add("selected")
-        //                 checkAnswer(answerArr)
-        //             } else {
-        //                 box.classList.remove("selected")
-        //             }
-        //         }
-        //     })
-    //         // box.addEventListener("touchmove",()=>{
-    //         //     let touchTarget = document.elementFromPoint(touchX,touchY)
-    //         //     if ( touchTarget.classList.contains("grid-box") ) {
-    //         //         if ( !touchTarget.classList.contains("answer-finished") ) {
-    //         //             touchTarget.classList.add("selected")
-    //         //         }
-    //         //     } else if ( touchTarget.parentElement.classList.contains("grid-box") ) {
-    //         //         if ( !touchTarget.parentElement.classList.contains("answer-finished") ) {
-    //         //             touchTarget.parentElement.classList.add("selected")
-    //         //         }
-    //         //     }
-    //         // })
-        //     if ( !box.classList.contains("filled") ) {
-        //         box.children[0].textContent = alphabet[ Math.floor( Math.random()*26 ) ]
-        //     }
-        // })
-        // let allAnswerImages = document.querySelectorAll(".answer-image-box")
-        // allAnswerImages.forEach( (image)=>{
-        //     image.addEventListener("click",()=>{
-        //         if ( !image.classList.contains("answer-finished") ) {
-        //             if ( imageSelected && !image.classList.contains("selected-image") ) {
-        //                 document.querySelector(".selected-image").classList.remove("selected-image")
-        //                 document.querySelectorAll(".answer").forEach( (answer) =>{
-        //                     answer.classList.remove("answer")
-        //                 })
-        //             }
-        //             if ( !image.classList.contains("selected-image") ) {
-        //                 image.classList.add("selected-image")
-        //                 imageSelected = true
-        //                 let targetImage = image.children[0].getAttribute("src")
-        //                 let targetName = allObj[targetImage].replaceAll(" ","")
-        //                 answerArr = answersList[targetName]
-        //                 markAnswer(answerArr)
-        //                 checkAnswer(answerArr)
-        //             } else {
-        //                 image.classList.remove("selected-image")
-        //                 imageSelected = false
-        //                 let allAnswerImages = document.querySelectorAll(".answer")
-        //                 allAnswerImages.forEach( (answer) =>{
-        //                     answer.classList.remove("answer")
-        //                 })
-        //             }
-        //         }
-        //     })
-        // })
+        gridBoxes = document.querySelectorAll(".grid-box")
+        gridBoxes.forEach( (box) =>{
+            box.addEventListener("click",()=>{
+                if ( !box.classList.contains("answer-finished") ) {
+                    if ( !box.classList.contains("selected") ) {
+                        box.classList.add("selected")
+                        checkAnswer(answerArr)
+                    } else {
+                        box.classList.remove("selected")
+                    }
+                }
+            })
+            // box.addEventListener("touchmove",()=>{
+            //     let touchTarget = document.elementFromPoint(touchX,touchY)
+            //     if ( touchTarget.classList.contains("grid-box") ) {
+            //         if ( !touchTarget.classList.contains("answer-finished") ) {
+            //             touchTarget.classList.add("selected")
+            //         }
+            //     } else if ( touchTarget.parentElement.classList.contains("grid-box") ) {
+            //         if ( !touchTarget.parentElement.classList.contains("answer-finished") ) {
+            //             touchTarget.parentElement.classList.add("selected")
+            //         }
+            //     }
+            // })
+            if ( !box.classList.contains("filled") ) {
+                box.children[0].textContent = alphabet[ Math.floor( Math.random()*26 ) ]
+            }
+        })
+        let allAnswerImages = document.querySelectorAll(".answer-image-box")
+        allAnswerImages.forEach( (image)=>{
+            image.addEventListener("click",()=>{
+                if ( !image.classList.contains("answer-finished") ) {
+                    if ( imageSelected && !image.classList.contains("selected-image") ) {
+                        document.querySelector(".selected-image").classList.remove("selected-image")
+                        document.querySelectorAll(".answer").forEach( (answer) =>{
+                            answer.classList.remove("answer")
+                        })
+                    }
+                    if ( !image.classList.contains("selected-image") ) {
+                        image.classList.add("selected-image")
+                        imageSelected = true
+                        let targetImage = image.children[0].getAttribute("src")
+                        let targetName = allObj[targetImage].replaceAll(" ","")
+                        answerArr = answersList[targetName]
+                        markAnswer(answerArr)
+                        checkAnswer(answerArr)
+                    } else {
+                        image.classList.remove("selected-image")
+                        imageSelected = false
+                        let allAnswerImages = document.querySelectorAll(".answer")
+                        allAnswerImages.forEach( (answer) =>{
+                            answer.classList.remove("answer")
+                        })
+                    }
+                }
+            })
+        })
     }
 }
 
@@ -744,7 +766,7 @@ function goRight(word,index) {
     let wordImage = getKey(allObj,finalWord)
     let answerWord = finalWord.replaceAll(" ","")
     answersList[answerWord] = tempAnswerIndexes
-    // answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
 }
 function goDown(word,index) {
@@ -761,7 +783,7 @@ function goDown(word,index) {
     let wordImage = getKey(allObj,finalWord)
     let answerWord = finalWord.replaceAll(" ","")
     answersList[answerWord] = tempAnswerIndexes
-    // answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
 }
 function goDiagonal(word,index) {
@@ -778,7 +800,7 @@ function goDiagonal(word,index) {
     let wordImage = getKey(allObj,finalWord)
     let answerWord = finalWord.replaceAll(" ","")
     answersList[answerWord] = tempAnswerIndexes
-    // answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
     populateGrid()
 }
 

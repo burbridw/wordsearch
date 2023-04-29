@@ -222,7 +222,23 @@ body {
     color: white;
     font-size: var(--grid-text);
 }
-
+.wordsearch-reset, .wordsearch-back {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--button-text);
+    color: white;
+    width: 12vh;
+    height: 18vh;
+    top: 1%;
+    left: 93%;
+    background-color: var(--button-color);
+    box-shadow: 1px 1px 3px 1px darkslategrey;
+}
+.wordsearch-back {
+    left: 1%;
+}
 /* .filled {
     background-color: lightgreen;
 } */
