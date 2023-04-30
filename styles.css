@@ -239,6 +239,11 @@ body {
 .wordsearch-back {
     left: 1%;
 }
+.back-button-arrow {
+    transform: rotateZ(270deg);
+    width: 16vh;
+    height: 8vh;
+}
 /* .filled {
     background-color: lightgreen;
 } */

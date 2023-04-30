@@ -120,7 +120,7 @@ function beginGamePreset(obj) {
     gridContainer.classList.remove("behind")
     answerDisplay.classList.add(difficulty)
     answerDisplay.classList.remove("behind")
-    document.querySelectorAll(".game-button").forEach( (button)=>{ button.classList.remove("behind") } )
+    document.querySelector(".wordsearch-back").classList.remove("behind")
     answersList = obj
     generateGrid()
     gridBoxes = document.querySelectorAll(".grid-box")
@@ -207,7 +207,10 @@ gameResetButton.addEventListener("click",()=>{
         wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
         generateGrid()
         populateGrid()
-        // beginGameRandom()
+    } else if ( gameType=== "preset") {
+        gridContainer.innerHTML = ""
+        answerDisplay.innerHTML = ""
+        beginGamePreset(allPresets[presetTopic][difficulty][presetNumber])
     }
 })
 
@@ -219,10 +222,29 @@ gameBackButton.addEventListener("click",()=>{
         setupWindow.classList.remove("behind")
         setupFirst.classList.remove("behind")
         inSetupFirst = true
+        selection = []
+        wordCounter = 0
         switch(gameType) {
             case "preset": 
-            topicSet = false
-            presetNumberSet = false
+                topicSet = false
+                presetNumberSet = false
+                document.querySelector(".set-topic").classList.remove("set-topic")
+                document.querySelector(".set-preset").classList.remove("set-preset")
+                document.querySelectorAll(".topic-button").forEach( (topic) =>{
+                    topic.classList.add("behind")
+                })
+                gridContainer.innerHTML = ""
+                answerDisplay.innerHTML = ""
+                break
+            case "random":
+                gridContainer.innerHTML = ""
+                answerDisplay.innerHTML = ""
+                document.querySelectorAll(".topic-button").forEach( (topic) =>{
+                    topic.classList.add("behind")
+                })
+                topicSet = false
+                document.querySelector(".set-topic").classList.remove("set-topic")
+                break
         }
 
     }
