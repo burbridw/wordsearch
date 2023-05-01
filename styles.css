@@ -222,7 +222,7 @@ body {
     color: white;
     font-size: var(--grid-text);
 }
-.wordsearch-reset, .wordsearch-back {
+.wordsearch-reset, .wordsearch-back, .case-button {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -243,6 +243,10 @@ body {
     transform: rotateZ(270deg);
     width: 16vh;
     height: 8vh;
+}
+.case-button {
+    top: 35%;
+    left: 1%;
 }
 /* .filled {
     background-color: lightgreen;

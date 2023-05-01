@@ -1,4 +1,5 @@
-const alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+const alphabetUpper = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+const alphabetLower = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
 const gridContainer = document.querySelector(".wordsearch-grid")
 const answerDisplay = document.querySelector(".answer-grid")
 
@@ -18,6 +19,7 @@ const setupNext = document.querySelector(".setup-next-button")
 
 const gameBackButton = document.querySelector(".wordsearch-back")
 const gameResetButton = document.querySelector(".wordsearch-reset")
+const gameCaseButton = document.querySelector(".case-button")
 
 let gridLayers
 let gridBoxes
@@ -42,6 +44,7 @@ let stop = false
 let word
 let testNumber
 let gameType
+let gameCase = "lower"
 
 let wordCounter = 0
 
@@ -150,7 +153,13 @@ function beginGamePreset(obj) {
             }
         })
         if ( !box.classList.contains("filled") ) {
-            box.children[0].textContent = alphabet[ Math.floor( Math.random()*26 ) ]
+            switch(gameCase) {
+                case "lower":
+                    box.children[0].textContent = alphabetLower[ Math.floor( Math.random()*26 ) ]
+                    break
+                case "upper":
+                    box.children[0].textContent = alphabetUpper[ Math.floor( Math.random()*26 ) ]
+            }
         }
     })
     let allAnswerImages = document.querySelectorAll(".answer-image-box")
@@ -182,6 +191,7 @@ function beginGamePreset(obj) {
             }
         })
     })
+    console.log(allAnswerImages.length)
 }
 
 function beginGameRandom() {
@@ -196,6 +206,8 @@ function beginGameRandom() {
     wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
     generateGrid()
     populateGrid()
+    let allAnswerBoxes = document.querySelectorAll(".answer-image-box")
+    console.log(allAnswerBoxes.length)
 }
 let remake = false
 
@@ -224,6 +236,7 @@ gameBackButton.addEventListener("click",()=>{
         inSetupFirst = true
         selection = []
         wordCounter = 0
+        document.querySelectorAll(".game-button").forEach( (button)=>{button.classList.add("behind") } )
         switch(gameType) {
             case "preset": 
                 topicSet = false
@@ -266,6 +279,38 @@ setupBack.addEventListener("click",()=>{
         document.querySelectorAll(".topic-button").forEach( (topic) =>{
             topic.classList.add("behind")
         })
+    }
+})
+
+gameCaseButton.addEventListener("click",()=>{
+    switch(gameCase) {
+        case "lower":
+            gameCase = "upper"
+            gameCaseButton.children[0].textContent = gameCaseButton.children[0].textContent.toUpperCase()
+            if ( inGame ) {
+                gridBoxes = document.querySelectorAll(".grid-box")
+                gridBoxes.forEach( (box)=>{
+                    box.children[0].textContent = box.children[0].textContent.toUpperCase()
+                })
+                let answerDisplayText = document.querySelectorAll(".answer-image-text")
+                answerDisplayText.forEach( (text)=>{
+                    text.children[0].textContent = text.children[0].textContent.toUpperCase()
+                })
+            }
+            break
+        case "upper":
+            gameCase = "lower"
+            gameCaseButton.children[0].textContent = gameCaseButton.children[0].textContent.toLowerCase()
+            if ( inGame ) {
+                gridBoxes = document.querySelectorAll(".grid-box")
+                gridBoxes.forEach( (box)=>{
+                    box.children[0].textContent = box.children[0].textContent.toLowerCase()
+                })
+                let answerDisplayText = document.querySelectorAll(".answer-image-text")
+                answerDisplayText.forEach( (text)=>{
+                    text.children[0].textContent = text.children[0].textContent.toLowerCase()
+                })
+            }
     }
 })
 
@@ -597,6 +642,11 @@ function checkAnswer(answerArr) {
             answer.classList.remove("selected")
         })
     }
+    let allAnswerImagesArr = Array.from(document.querySelectorAll(".answer-image-box"))
+    let allFinishedAnswers = allAnswerImagesArr.filter( (box) => { return !box.classList.contains("answer-finished") } )
+    if ( allFinishedAnswers.length < 1 ) {
+        console.log("Finished")
+    }
 }
 
 
@@ -639,7 +689,13 @@ function populateGrid() {
             //     }
             // })
             if ( !box.classList.contains("filled") ) {
-                box.children[0].textContent = alphabet[ Math.floor( Math.random()*26 ) ]
+                switch(gameCase) {
+                    case "lower":
+                        box.children[0].textContent = alphabetLower[ Math.floor( Math.random()*26 ) ]
+                        break
+                    case "upper":
+                        box.children[0].textContent = alphabetUpper[ Math.floor( Math.random()*26 ) ]
+                }
             }
         })
         let allAnswerImages = document.querySelectorAll(".answer-image-box")
@@ -779,16 +835,29 @@ function goRight(word,index) {
     let noSpaceWord = word.filter( (a)=> {return a != " " })
     let tempAnswerIndexes = []
     for ( let i = 0; i < noSpaceWord.length; i ++ ) {
-        gridBoxes[index+i].children[0].textContent = noSpaceWord[i]
+        switch(gameCase) {
+            case "upper":
+                gridBoxes[index+i].children[0].textContent = noSpaceWord[i]
+                break
+            case "lower":
+                gridBoxes[index+i].children[0].textContent = noSpaceWord[i].toLowerCase()
+        }
         gridBoxes[index+i].classList.add("filled")
         tempAnswerIndexes.push(index+i)
     }
     wordCounter++
-    let finalWord = word.join("").toLowerCase()
-    let wordImage = getKey(allObj,finalWord)
-    let answerWord = finalWord.replaceAll(" ","")
+    let finalWord = word.join("")
+    let finalWordLower = word.join("").toLowerCase()
+    let wordImage = getKey(allObj,finalWordLower)
+    let answerWord = finalWordLower.replaceAll(" ","")
     answersList[answerWord] = tempAnswerIndexes
-    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+    switch(gameCase) {
+        case "upper":
+            answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+            break
+        case "lower":
+            answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWordLower}</span></div>`
+    }
     populateGrid()
 }
 function goDown(word,index) {
@@ -796,16 +865,29 @@ function goDown(word,index) {
     let noSpaceWord = word.filter( (a)=> {return a != " " })
     let tempAnswerIndexes = []
     for ( let i = 0; i < noSpaceWord.length; i ++ ) {
-        gridBoxes[index+(i*gridWidth)].children[0].textContent = noSpaceWord[i]
+        switch(gameCase) {
+            case "upper":
+                gridBoxes[index+(i*gridWidth)].children[0].textContent = noSpaceWord[i]
+                break
+            case "lower":
+                gridBoxes[index+(i*gridWidth)].children[0].textContent = noSpaceWord[i].toLowerCase()
+        }
         gridBoxes[index+(i*gridWidth)].classList.add("filled")
         tempAnswerIndexes.push(index+(i*gridWidth))
     }
     wordCounter++
-    let finalWord = word.join("").toLowerCase()
-    let wordImage = getKey(allObj,finalWord)
-    let answerWord = finalWord.replaceAll(" ","")
+    let finalWord = word.join("")
+    let finalWordLower = word.join("").toLowerCase()
+    let wordImage = getKey(allObj,finalWordLower)
+    let answerWord = finalWordLower.replaceAll(" ","")
     answersList[answerWord] = tempAnswerIndexes
-    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+    switch(gameCase) {
+        case "upper":
+            answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+            break
+        case "lower":
+            answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWordLower}</span></div>`
+    }
     populateGrid()
 }
 function goDiagonal(word,index) {
@@ -813,16 +895,29 @@ function goDiagonal(word,index) {
     let noSpaceWord = word.filter( (a)=> {return a != " " })
     let tempAnswerIndexes = []
     for ( let i = 0; i < noSpaceWord.length; i ++ ) {
-        gridBoxes[(index+(i*gridWidth))+i].children[0].textContent = noSpaceWord[i]
+        switch(gameCase) {
+            case "upper":
+                gridBoxes[(index+(i*gridWidth))+i].children[0].textContent = noSpaceWord[i]
+                break
+            case "lower":
+                gridBoxes[(index+(i*gridWidth))+i].children[0].textContent = noSpaceWord[i].toLowerCase()
+        }
         gridBoxes[(index+(i*gridWidth))+i].classList.add("filled")
         tempAnswerIndexes.push((index+(i*gridWidth))+i)
     }
     wordCounter++
-    let finalWord = word.join("").toLowerCase()
-    let wordImage = getKey(allObj,finalWord)
-    let answerWord = finalWord.replaceAll(" ","")
+    let finalWord = word.join("")
+    let finalWordLower = word.join("").toLowerCase()
+    let wordImage = getKey(allObj,finalWordLower)
+    let answerWord = finalWordLower.replaceAll(" ","")
     answersList[answerWord] = tempAnswerIndexes
-    answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+    switch(gameCase) {
+        case "upper":
+            answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWord}</span></div>`
+            break
+        case "lower":
+            answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWordLower}</span></div>`
+    }
     populateGrid()
 }
 
