@@ -32,6 +32,7 @@ let inSetupFirst = true
 let inSetupPreset = false
 let inSetupRandom = false
 let inGame = false
+let finished = false
 let setupPresetSelect = false
 let setupRandomSelect = false
 let difficulty
@@ -55,6 +56,7 @@ let selection = []
 let randomizedArr = []
 let wordListDeploy = []
 let answersList = {}
+let selectedBoxArr = []
 
 let dataSet = {}
 
@@ -133,22 +135,57 @@ function beginGamePreset(obj) {
         let splitPresetWord = word.replaceAll(" ","").toUpperCase().split("")
         let presetIndex = obj[word]
         for ( let i = 0; i < splitPresetWord.length; i++ ) {
-            gridBoxes[presetIndex[i]].children[0].textContent = splitPresetWord[i]
+            switch(gameCase) {
+                case "upper":
+                    gridBoxes[presetIndex[i]].children[0].textContent = splitPresetWord[i]
+                    break
+                case "lower":
+                    gridBoxes[presetIndex[i]].children[0].textContent = splitPresetWord[i].toLowerCase()
+            }
             gridBoxes[presetIndex[i]].classList.add("filled")
         }
-        let finalWord = word
+        let finalWordUpper = word.toUpperCase()
         let wordImage = getKey(allObj,word)
-        answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${word}</span></div>`
+        switch(gameCase) {
+            case "lower":
+                answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${word}</span></div>`
+                break
+            case "upper":
+                answerDisplay.innerHTML += `<div class="answer-image-box"><img src="${wordImage}"><div class="answer-image-text"><span>${finalWordUpper}</span></div>`
+        }
         
     })
     gridBoxes.forEach( (box) =>{
         box.addEventListener("click",()=>{
-            if ( !box.classList.contains("answer-finished") ) {
+            if ( !box.classList.contains("answer-finished") && !finished ) {
                 if ( !box.classList.contains("selected") ) {
                     box.classList.add("selected")
+                    selectedBoxArr.push(box)
                     checkAnswer(answerArr)
                 } else {
                     box.classList.remove("selected")
+                    selectedBoxArr.splice(selectedBoxArr.indexOf(box),1)
+                    console.log(selectedBoxArr)
+                }
+            }
+        })
+        box.addEventListener("touchmove",()=>{
+            let touchTarget = document.elementFromPoint(touchX,touchY)
+            if ( touchTarget.classList.contains("grid-box") ) {
+                if ( !touchTarget.classList.contains("answer-finished") && !finished) {
+                    touchTarget.classList.add("selected")
+                    if ( !selectedBoxArr.includes(touchTarget) ) {
+                        selectedBoxArr.push(touchTarget)
+                    }
+                    checkAnswer(answerArr)
+                }
+            } else if ( touchTarget.parentElement.classList.contains("grid-box") ) {
+                if ( !touchTarget.parentElement.classList.contains("answer-finished") && !finished) {
+                    touchTarget.parentElement.classList.add("selected")
+                    if ( !selectedBoxArr.includes(touchTarget.parentElement) ) {
+                        selectedBoxArr.push(touchTarget.parentElement)
+                    }
+                    checkAnswer(answerArr)
                 }
             }
         })
@@ -191,7 +228,6 @@ function beginGamePreset(obj) {
             }
         })
     })
-    console.log(allAnswerImages.length)
 }
 
 function beginGameRandom() {
@@ -206,8 +242,6 @@ function beginGameRandom() {
     wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
     generateGrid()
     populateGrid()
-    let allAnswerBoxes = document.querySelectorAll(".answer-image-box")
-    console.log(allAnswerBoxes.length)
 }
 let remake = false
 
@@ -219,6 +253,7 @@ gameResetButton.addEventListener("click",()=>{
         wordListDeploy = randomizedArr.slice(0,levels[difficulty]).sort((a,b)=>{ return b.length - a.length})
         generateGrid()
         populateGrid()
+        finished = false
     } else if ( gameType=== "preset") {
         gridContainer.innerHTML = ""
         answerDisplay.innerHTML = ""
@@ -398,7 +433,7 @@ const reference = {
     "random-descriptions": "descriptions", "preset-descriptions": "descriptions", "random-conditions": "conditions",
     "preset-conditions": "conditions", "random-buildings": "buildings", "preset-buildings": "buildings",
     "random-jobs": "jobs", "preset-jobs": "jobs", "random-clubs": "clubactivities", "preset-clubs": "clubactivities",
-    "random-actions1": "actions1", "random-actions2": "actions2", "preset-actions": "actions", "random-nature": "nature",
+    "random-actions1": "actions1", "random-actions2": "actions2", "preset-actions1": "actions1",  "preset-actions2": "actions2", "random-nature": "nature",
     "random-body": "body", "random-school": "school", "random-schoolevents": "schoolevents", "random-shapes": "shapes",
     "random-drinks": "drinks", "random-ingredients": "ingredients", "random-tastes": "tastes", "random-seaanimals": "seaanimals",
     "random-clothes": "clothes", "random-vehicles": "vehicles", "random-instruments": "instruments", "random-yearlyevents": "yearlyevents",
@@ -580,47 +615,57 @@ function generateGrid() {
         <div class="grid-box"><span>${i}</span><?div>
         `
     }
+    finished = false
 }
 
 
-// let mouseDown = false
-// window.addEventListener("mousedown",(e)=>{
-//     console.log("mouse is down")
-//     mouseDown = true
-//     let target = document.elementFromPoint(e.x,e.y)
-//     if ( target.classList.contains("grid-box") ) {
-//         target.classList.add("selected")
-//     } else if ( target.parentElement.classList.contains("grid-box") ) {
-//         target.parentElement.classList.add("selected")
-//     }
-// })
-// window.addEventListener("mousemove",(e)=> {
-//     e.preventDefault()
-//     let moveTarget = document.elementFromPoint(e.x,e.y)
-//     if ( mouseDown ) {
-//         if ( moveTarget.classList.contains("grid-box") ) {
-//             moveTarget.classList.add("selected")
-//             checkAnswer(answerArr)
-//         } else if ( moveTarget.parentElement.classList.contains("grid-box") ) {
-//             moveTarget.parentElement.classList.add("grid-box")
-//         }
-//     }
-// })
-// window.addEventListener("mouseup",(e)=>{
-//     mouseDown = false
-// })
-// window.addEventListener("touchmove",getTouchPosition)
-// let touchX = 0
-// let touchY = 0
-// function getTouchPosition(event) {
-//     let touch = event.touches[0]
-//     touchX = Math.floor(touch.pageX)
-//     touchY = Math.floor(touch.pageY)
-// }
+let mouseDown = false
+window.addEventListener("mousedown",(e)=>{
+    mouseDown = true
+    let target = document.elementFromPoint(e.x,e.y)
+    // if ( target.classList.contains("grid-box") ) {
+    //     target.classList.add("selected")
+    // } else if ( target.parentElement.classList.contains("grid-box") ) {
+    //     target.parentElement.classList.add("selected")
+    // }
+})
+window.addEventListener("mousemove",(e)=> {
+    e.preventDefault()
+    let moveTarget = document.elementFromPoint(e.x,e.y)
+    if ( mouseDown && !finished) {
+        if ( moveTarget.classList.contains("grid-box") && !moveTarget.classList.contains("answer-finished") ) {
+            moveTarget.classList.add("selected")
+            if ( !selectedBoxArr.includes(moveTarget)) {
+                selectedBoxArr.push(moveTarget)
+            }
+            checkAnswer(answerArr)
+        } else if ( moveTarget.parentElement.classList.contains("grid-box") && !moveTarget.parentElement.classList.contains("answer-finished") ) {
+            moveTarget.parentElement.classList.add("grid-box")
+            if ( !selectedBoxArr.includes(moveTarget.parentElement) ) {
+                selectedBoxArr.push(moveTarget.parentElement)
+            }
+        }
+    }
+})
+window.addEventListener("mouseup",(e)=>{
+    mouseDown = false
+})
+window.addEventListener("touchmove",getTouchPosition)
+let touchX = 0
+let touchY = 0
+function getTouchPosition(event) {
+    let touch = event.touches[0]
+    touchX = Math.floor(touch.pageX)
+    touchY = Math.floor(touch.pageY)
+}
 
 
 function checkAnswer(answerArr) {
     gridBoxes = document.querySelectorAll(".grid-box")
+    if ( selectedBoxArr.length > gridWidth ) {
+        selectedBoxArr[0].classList.remove("selected")
+        selectedBoxArr.shift()
+    }
     let count = 0
     let countFinish = answerArr.length
     for ( let i = 0; i < answerArr.length; i++ ) {
@@ -640,13 +685,16 @@ function checkAnswer(answerArr) {
         })
         document.querySelectorAll(".selected").forEach( (answer) =>{
             answer.classList.remove("selected")
+            selectedBoxArr.splice(selectedBoxArr.indexOf(answer),1)
         })
     }
     let allAnswerImagesArr = Array.from(document.querySelectorAll(".answer-image-box"))
     let allFinishedAnswers = allAnswerImagesArr.filter( (box) => { return !box.classList.contains("answer-finished") } )
     if ( allFinishedAnswers.length < 1 ) {
         console.log("Finished")
+        finished = true
     }
+    console.log(selectedBoxArr)
 }
 
 
@@ -667,27 +715,41 @@ function populateGrid() {
         gridBoxes = document.querySelectorAll(".grid-box")
         gridBoxes.forEach( (box) =>{
             box.addEventListener("click",()=>{
-                if ( !box.classList.contains("answer-finished") ) {
-                    if ( !box.classList.contains("selected") ) {
-                        box.classList.add("selected")
-                        checkAnswer(answerArr)
-                    } else {
-                        box.classList.remove("selected")
+                if ( !finished ) {
+                    if ( !box.classList.contains("answer-finished") ) {
+                        if ( !box.classList.contains("selected") ) {
+                            box.classList.add("selected")
+                            selectedBoxArr.push(box)
+                            checkAnswer(answerArr)
+                        } else {
+                            box.classList.remove("selected")
+                            selectedBoxArr.splice(selectedBoxArr.indexOf(box),1)
+                        }
                     }
                 }
             })
-            // box.addEventListener("touchmove",()=>{
-            //     let touchTarget = document.elementFromPoint(touchX,touchY)
-            //     if ( touchTarget.classList.contains("grid-box") ) {
-            //         if ( !touchTarget.classList.contains("answer-finished") ) {
-            //             touchTarget.classList.add("selected")
-            //         }
-            //     } else if ( touchTarget.parentElement.classList.contains("grid-box") ) {
-            //         if ( !touchTarget.parentElement.classList.contains("answer-finished") ) {
-            //             touchTarget.parentElement.classList.add("selected")
-            //         }
-            //     }
-            // })
+            box.addEventListener("touchmove",()=>{
+                let touchTarget = document.elementFromPoint(touchX,touchY)
+                if ( touchTarget.classList.contains("grid-box") ) {
+                    if ( !touchTarget.classList.contains("answer-finished") && !finished) {
+                        touchTarget.classList.add("selected")
+                        if ( !selectedBoxArr.includes(touchTarget) ) {
+                            selectedBoxArr.push(touchTarget)
+                        } else {
+                            console.log(finished)
+                        }
+                        checkAnswer(answerArr)
+                    }
+                } else if ( touchTarget.parentElement.classList.contains("grid-box") ) {
+                    if ( !touchTarget.parentElement.classList.contains("answer-finished") && !finished) {
+                        touchTarget.parentElement.classList.add("selected")
+                        if ( !selectedBoxArr.includes(touchTarget.parentElement) ) {
+                            selectedBoxArr.push(touchTarget.parentElement)
+                        }
+                        checkAnswer(answerArr)
+                    }
+                }
+            })
             if ( !box.classList.contains("filled") ) {
                 switch(gameCase) {
                     case "lower":

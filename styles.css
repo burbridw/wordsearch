@@ -248,6 +248,10 @@ body {
     top: 35%;
     left: 1%;
 }
+.reset-mark {
+    height: 10vh;
+    width: 10vh;
+}
 /* .filled {
     background-color: lightgreen;
 } */
