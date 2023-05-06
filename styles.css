@@ -34,6 +34,7 @@ body {
     align-items: center;
     font-size: var(--button-text);
     color: white;
+    cursor: pointer;
 }
 .setup-back-button {
     top: 1%;
@@ -57,6 +58,7 @@ body {
     background-color: var(--button-color);
     box-shadow: var(--button-shadow);
     border-radius: 15px;
+    cursor: pointer;
 }
 .setup-button.set, .set-difficulty {
     box-shadow: var(--set-shadow);
@@ -94,6 +96,7 @@ body {
     grid-template-columns: repeat(4,1fr);
     grid-template-rows: repeat(3,1fr);
     gap: 1em;
+    cursor: pointer;
 }
 .setup-preset-numbers {
     position: absolute;
@@ -106,6 +109,7 @@ body {
     grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(2,1fr);
     gap: 1em;
+    cursor: pointer;
 }
 .preset-topic-button, .random-topic-button {
     background-color: var(--button-color);
@@ -116,6 +120,7 @@ body {
     align-items: center;
     font-size: var(--button-text);
     color: white;
+    cursor: pointer;
 }
 .random-topic-button {
     font-size: var(--answer-text);
@@ -173,6 +178,7 @@ body {
     transform: translateX(-50%);
     height: 20vh;
     width: 90%;
+    box-shadow: var(--button-shadow);
 }
 .answer-grid.easy {
     grid-template-columns: repeat(4,1fr);
@@ -190,6 +196,7 @@ body {
 }
 .answer-image-box {
     border-radius: 10px;
+    cursor: pointer;
 }
 .answer-image-box img {
     max-height: 8vh;
@@ -221,6 +228,7 @@ body {
     align-items: center;
     color: white;
     font-size: var(--grid-text);
+    cursor: pointer;
 }
 .wordsearch-reset, .wordsearch-back, .case-button {
     position: absolute;
@@ -235,6 +243,7 @@ body {
     left: 93%;
     background-color: var(--button-color);
     box-shadow: 1px 1px 3px 1px darkslategrey;
+    cursor: pointer;
 }
 .wordsearch-back {
     left: 1%;
