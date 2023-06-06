@@ -157,6 +157,7 @@ body {
     width: 80vw; 
     box-shadow: var(--button-shadow);
     background-color: var(--button-color);
+    touch-action: none;
 }
 .wordsearch-grid.easy {
     grid-template-columns: repeat(12,1fr);
