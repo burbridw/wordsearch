@@ -20,7 +20,7 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: lightblue;
-    font-family: Tahoma, sans-serif;
+    font-family: "Playpen Sans", Tahoma, sans-serif;
 }
 
 .setup-back-button, .setup-next-button {
